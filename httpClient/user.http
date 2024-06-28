@@ -1,0 +1,84 @@
+#@host = http://localhost:8000
+
+###db status
+GET {{host}}/status
+
+###登录 login
+# @name login
+POST {{host}}/admin/login
+Content-Type: application/json
+
+{
+  "mobile": "18500000000",
+  "password": "e10adc3949ba59abbe56e057f20f883e"
+}
+
+# idea
+> {% client.global.set("token", response.body.data); %}
+
+# vscode
+@token = {{login.response.body.data}}
+
+
+###查询用户菜单 query_user_menu
+GET {{host}}/admin/query_user_menu
+Authorization: Bearer {{token}}
+
+
+###用户列表 user_list
+POST {{host}}/admin/user_list
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "current": 1,
+  "pageSize": 10,
+  "mobile": "18613030352",
+  "status": 1
+}
+
+###新增用户 user_save
+POST {{host}}/admin/user_save
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "mobile": "18613030351",
+  "user_name": "test",
+  "remark": "test"
+}
+
+###删除用户 user_delete
+POST {{host}}/admin/user_delete
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "ids": [13]
+}
+
+###更新用户 user_update
+POST {{host}}/admin/user_update
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": 17,
+  "mobile": "18613030351",
+  "user_name": "test123",
+  "remark": "test123",
+  "sort": 1,
+  "status": 1
+}
+
+
+###修改密码 update_user_password
+POST {{host}}/admin/update_user_password
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": 2,
+  "password": "e10adc3949ba59abbe56e057f20f883e",
+  "new_password": "e10adc3949ba59abbe56e057f20f883e"
+}

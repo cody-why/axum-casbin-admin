@@ -1,0 +1,31 @@
+addr: 127.0.0.1:8000
+# choose ("mem","redis")
+cache_type: mem
+# jwt_secret
+jwt_secret: "axum_admin"
+# jwt to the exp (in seconds) 
+jwt_exp : 86400
+# Jwt refresh seconds
+jwt_refresh_token : 3600
+# Login failure rejection policy
+login_fail_retry: 3
+# Wait time (seconds) for login after failure
+login_fail_retry_wait_sec: 10
+# removed trash after days, default 30 days
+trash_recycle_days: 30
+#/ format datetime.['YYYY-MM-DD hh:mm:ss.000000', 'YYYY-MM-DD hh:mm:ss']
+datetime_format: "YYYY-MM-DD hh:mm:ss"
+# white_list_api
+white_list_api: ["/","/admin/login"]
+# 初始密码
+default_password: "123456"
+
+db:
+  #url: mysql://root:789@192.168.1.199:3306/hello
+  url: mysql://root:789789@172.17.99.45:3306/axum_admin
+  max_connections: 10
+  min_connections: 2
+  connect_timeout: 60
+
+# url: redis://user:pwd@host:port/db
+redis_url: redis://:789789@172.17.99.45:6379/

@@ -2,6 +2,7 @@ use std::time::SystemTime;
 
 pub mod cache;
 mod cache_util;
+pub mod casbin;
 pub mod db;
 pub mod json;
 pub mod jwt_util;

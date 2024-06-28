@@ -11,6 +11,7 @@ pub mod role_service;
 pub mod sys_trash_service;
 pub mod user_service;
 
+pub mod casbin_service;
 pub mod login_service;
 
 // /// all the service struct

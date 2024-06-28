@@ -1,3 +1,5 @@
+use casbin::error::Error as CasbinError;
+use casbin_rb_adapter::casbin;
 use rbatis::rbdc;
 use thiserror::Error;
 
@@ -17,6 +19,8 @@ pub enum Error {
     Jwt(#[from] jsonwebtoken::errors::Error),
     #[error("{0}: {1}")]
     Code(i32, String),
+    #[error("{0}")]
+    Casbin(#[from] CasbinError),
 }
 
 impl Error {

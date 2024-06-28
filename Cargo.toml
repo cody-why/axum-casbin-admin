@@ -42,6 +42,8 @@ async-trait = "0.1"
 once_cell = "1.19"
 # lazy_static = "1"
 
+casbin-rb-adapter = {version = "0.1", features = ["tracing"]}
+casbin = {version = "2.2"}
 # cached = {version = "0.51", features = ["async"]}
 mini-moka = "0.10"
 

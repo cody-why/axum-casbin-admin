@@ -2,18 +2,18 @@ use crate::middleware::context::UserContext;
 use crate::model::menu::SysMenu;
 use crate::model::role::SysRole;
 use crate::model::user::SysUser;
-use crate::model::user_role::SysUserRole;
 use crate::service::login_service;
 use crate::utils::jwt_util::JWTToken;
 use crate::utils::password::Password;
 use crate::vo::user_vo::*;
+use crate::Result;
 use crate::{context, pool, Error};
-use crate::{is_empty, Result};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use rbatis::plugin::page::PageRequest;
 use rbatis::Page;
 use std::collections::HashSet;
 
+use super::casbin_service::CasbinService;
 use super::role_service::get_role_menu_ids;
 
 // 用户登录
@@ -45,50 +45,21 @@ pub async fn login(item: UserLoginReq) -> Result<String> {
     let id = user.id.unwrap();
     let username = user.user_name;
 
-    let btn_menu = query_user_btn_menu(id).await;
+    // let btn_menu = query_user_btn_menu(id).await;
 
-    let token = JWTToken::new(id, &username, btn_menu).create_token()?;
+    let token = JWTToken::new(id, &username, vec![]).create_token()?;
     Ok(token)
 }
 
-async fn query_user_btn_menu(id: u64) -> Vec<String> {
-    let rb = pool!();
-
-    let roles = SysUserRole::select_by_cache(rb, "user_id", id).await.unwrap_or_default();
-    let roles = roles.iter().map(|x| x.role_id).collect::<Vec<i32>>();
-    let isadmin = roles.contains(&1);
-    if isadmin {
-        // let data = SysMenu::select_all_cache(rb).await?;
-        // data.par_iter().filter_map(|x|{
-        //     x.api_url.as_ref().filter(|u|!u.is_empty())
-        // }).cloned().collect()
-        vec!["*".into()]
-    } else {
-        // let data = SysMenu::select_by_user_id(rb, id).await.unwrap_or_default();
-        let menu_ids = get_role_menu_ids(&roles).await.unwrap_or_default();
-        let sys_menu_list = SysMenu::select_all_cache(rb).await.unwrap_or_default();
-        sys_menu_list
-            .into_iter()
-            .filter(|x| {
-                if let Some(id) = x.id {
-                    return menu_ids.contains(&id) && !is_empty!(x.api_url);
-                }
-                false
-            })
-            .map(|x| x.api_url.unwrap())
-            .collect()
-    }
-}
 
 pub async fn query_user_role(item: QueryUserRoleReq) -> Result<QueryUserRoleData> {
     let rb = pool!();
 
-    let user_role = SysUserRole::select_all_cache(rb).await?;
-    let user_role_ids: Vec<i32> = user_role
-        .iter()
-        .filter(|x| x.user_id == item.user_id)
-        .map(|x| x.role_id)
-        .collect();
+    // let user_role = SysUserRole::select_all_cache(rb).await?;
+    // let user_role_ids: Vec<i32> = user_role.iter().filter(|x| x.user_id ==
+    // item.user_id)     .map(|x| x.role_id).collect();
+
+    let user_role_ids = CasbinService::get_roles_for_user(item.user_id).await;
 
     let sys_role = SysRole::select_all_cache(rb).await?;
     let sys_role_list: Vec<UserRoleList> = sys_role.into_iter().map(|x| x.into()).collect();
@@ -107,23 +78,25 @@ pub async fn update_user_role(item: UpdateUserRoleReq) -> Result<bool> {
     }
 
     let role_ids = item.role_ids;
-    let len = role_ids.len();
-    let rb = pool!();
-    let _ = SysUserRole::delete_by_column(rb, "user_id", user_id).await?;
-    let time = Some(rbatis::rbdc::DateTime::now());
-    let mut sys_role_user_list: Vec<SysUserRole> = Vec::new();
-    for role_id in role_ids {
-        sys_role_user_list.push(SysUserRole {
-            id: None,
-            create_time: time.clone(),
-            update_time: time.clone(),
-            status: 1,
-            role_id,
-            user_id,
-        })
-    }
-    let _ = SysUserRole::insert_batch(rb, &sys_role_user_list, len as u64).await?;
-    SysUserRole::remove_cached();
+    // let len = role_ids.len();
+    // let rb = pool!();
+    // let _ = SysUserRole::delete_by_column(rb, "user_id", user_id).await?;
+    // let time = Some(DateTime::now());
+    // let mut sys_role_user_list: Vec<SysUserRole> = Vec::new();
+    // for role_id in role_ids {
+    //     sys_role_user_list.push(SysUserRole {
+    //         id: None,
+    //         create_time: time.clone(),
+    //         update_time: time.clone(),
+    //         status: 1,
+    //         role_id,
+    //         user_id,
+    //     })
+    // }
+    // let result = SysUserRole::insert_batch(rb, &sys_role_user_list, len as u64).await?;
+    // SysUserRole::remove_cached();
+
+    let _ = CasbinService::update_user_roles(user_id, &role_ids).await?;
 
     Ok(true)
 }
@@ -138,12 +111,12 @@ pub async fn query_user_menu(content: UserContext) -> Result<QueryUserMenuData> 
     };
 
     // role_id为1是超级管理员
-    let roles = SysUserRole::select_by_cache(rb, "user_id", content.id).await?;
-    let roles: Vec<i32> = roles.iter().map(|x| x.role_id).collect();
+    let roles = CasbinService::get_roles_for_user(content.id).await;
     let is_admin = roles.contains(&1);
     let sys_menu_list: Vec<SysMenu> = if is_admin {
         SysMenu::select_all_cache(rb).await?
     } else {
+        // let sys_menu_list = SysMenu::select_by_user_id(rb, content.id).await?;
         // let menu_ids = CasbinService::get_user_menu_ids(content.id).await;
         let menu_ids = get_role_menu_ids(&roles).await?;
         // tracing::debug!("menu_ids: {:?}", menu_ids);

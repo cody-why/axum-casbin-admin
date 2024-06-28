@@ -1,11 +1,12 @@
 use crate::model::menu::SysMenu;
 use crate::model::role::SysRole;
 use crate::model::role_menu::SysRoleMenu;
-use crate::model::user_role::SysUserRole;
 use crate::vo::role_vo::*;
 use crate::{pool, Error, Result};
 use rbatis::plugin::page::PageRequest;
 use rbatis::Page;
+
+use super::casbin_service::CasbinService;
 
 // 查询角色列表
 pub async fn role_list(item: RoleListReq) -> Result<Page<RoleListData>> {
@@ -44,16 +45,21 @@ pub async fn role_delete(item: RoleDeleteReq) -> Result<u64> {
     let rb = pool!();
 
     let ids = item.ids;
-    let user_role = SysUserRole::select_all_cache(rb).await?;
-    let have = user_role.iter().any(|x| ids.contains(&x.role_id));
-    if have {
-        return Error::err("角色已被使用,不能删除");
+    // let user_role = SysUserRole::select_all_cache(rb).await?;
+    // let have = user_role.iter().any(|x| ids.contains(&x.role_id));
+
+    for id in &ids {
+        let users = CasbinService::get_users_for_role(id).await;
+        if !users.is_empty() {
+            return Error::err("角色已被使用,不能删除");
+        }
     }
 
     let mut tx = rb.acquire_begin().await?;
     let result = SysRole::delete_in_column(&tx, "id", &ids).await?;
     SysRoleMenu::delete_in_column(&tx, "role_id", &ids).await?;
     tx.commit().await?;
+    let _ = CasbinService::delete_roles_policy(&ids).await;
 
     Ok(result.rows_affected)
 }
@@ -119,6 +125,20 @@ pub async fn update_role_menu(item: UpdateRoleMenuReq) -> Result<u64> {
 
     let result = SysRoleMenu::insert_batch(rb, &role_menu, len as u64).await?;
     SysRoleMenu::remove_cached();
+
+    // 更新角色权限
+    let menus = SysMenu::select_all_cache(rb).await?;
+    let menus: Vec<SysMenu> = menus
+        .into_iter()
+        .filter(|x| {
+            if let Some(id) = x.id.as_ref() {
+                item.menu_ids.contains(id)
+            } else {
+                false
+            }
+        })
+        .collect();
+    let _ = CasbinService::update_role_policy(role_id, &menus).await?;
 
     Ok(result.rows_affected)
 }

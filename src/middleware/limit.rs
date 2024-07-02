@@ -13,10 +13,10 @@ pub async fn limit_layer(req: Request, next: Next) -> Result<response::Response,
     let ip = req.extensions().get::<ConnectInfo<SocketAddr>>().unwrap();
     // println!("limit_layer: {:?}", ip.ip());
     let key = format!("{}-{:?}", req.uri(), ip.ip());
-    if Limits::get_cache_by(&key).is_some() {
+    if Limits::get_cache(&key).is_some() {
         return Err(StatusCode::FORBIDDEN);
     }
-    Limits::set_cache_by(key, true);
+    Limits::set_cache(key, true);
 
     Ok(next.run(req).await)
 }

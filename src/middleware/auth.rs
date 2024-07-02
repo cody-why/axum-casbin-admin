@@ -2,7 +2,6 @@ use axum::extract::Request;
 use axum::http::{HeaderValue, StatusCode};
 use axum::middleware::Next;
 use axum::response;
-use tracing::info;
 
 use crate::context;
 use crate::middleware::context::UserContext;
@@ -19,19 +18,18 @@ pub async fn auth_layer(
     let mut jwt_token = match jwt_token {
         Ok(token) => token,
         Err(err) => {
-            info!("auth failed: {}", err);
+            tracing::warn!("auth failed: {}", err);
             return Err(StatusCode::UNAUTHORIZED);
         },
     };
 
     let is_qm = &path == "/admin/query_user_menu";
-
     let auth = is_qm
         || jwt_token.permissions.first() == Some(&"*".to_string())
         || jwt_token.permissions.iter().any(|permission| permission == &path);
     if !auth {
-        tracing::warn!("auth_layer req {:?} {:?} auth={}", req.method(), req.uri(), auth);
-        return Err(StatusCode::UNAUTHORIZED);
+        // tracing::warn!("auth_layer req {:?} {:?} auth={}", req.method(), req.uri(), auth);
+        return Err(StatusCode::FORBIDDEN);
     }
 
     let context = UserContext { id: jwt_token.id };

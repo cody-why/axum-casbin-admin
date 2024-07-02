@@ -153,7 +153,6 @@ dependencies = [
  "serde",
  "serde_yaml",
  "sonic-rs",
- "sqlparser",
  "thiserror",
  "tokio",
  "tower",
@@ -2123,15 +2122,6 @@ checksum = "d91ed6c858b01f942cd56b37a94b3e0a1798290327d1236e4d9cf4eaca44d29d"
 dependencies = [
  "base64ct",
  "der",
-]
-
-[[package]]
-name = "sqlparser"
-version = "0.47.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "295e9930cd7a97e58ca2a070541a3ca502b17f5d1fa7157376d0fabd85324f25"
-dependencies = [
- "log",
 ]
 
 [[package]]

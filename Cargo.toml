@@ -34,7 +34,7 @@ thiserror = "1.0"
 bcrypt = "0.15"
 md5="0.7"
 
-sqlparser = "0.47"
+# sqlparser = "0.47"
 parking_lot = "0.12"
 rayon = "1.10"
 dashmap = {version = "6.0", features = ["rayon"]}

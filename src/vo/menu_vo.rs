@@ -92,10 +92,7 @@ pub struct MenuUpdateReq {
     pub menu_type: i32,
 }
 
-rbatis::impl_update!(
-    MenuUpdateReq {},
-    "sys_menu"
-);
+rbatis::impl_update!(MenuUpdateReq {}, "sys_menu");
 
 impl From<MenuUpdateReq> for SysMenu {
     fn from(req: MenuUpdateReq) -> Self {

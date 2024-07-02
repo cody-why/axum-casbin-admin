@@ -113,7 +113,7 @@ pub async fn update_role_menu(item: UpdateRoleMenuReq) -> Result<u64> {
     let role_id = item.role_id;
 
     let rb = pool!();
-    let roles = SysRole::select_by_id(rb, item.role_id as u64).await?;
+    let roles = SysRole::select_by_id_cache(rb, item.role_id as u64).await?;
     if roles.is_empty() {
         return Error::err("角色不存在");
     }
@@ -124,7 +124,7 @@ pub async fn update_role_menu(item: UpdateRoleMenuReq) -> Result<u64> {
     let role_menu: Vec<SysRoleMenu> = item.menu_ids.iter().map(|x| SysRoleMenu::new(role_id, *x)).collect();
 
     let result = SysRoleMenu::insert_batch(rb, &role_menu, len as u64).await?;
-    SysRoleMenu::remove_cached();
+    SysRoleMenu::remove_select_all_cache();
 
     // 更新角色权限
     let menus = SysMenu::select_all_cache(rb).await?;

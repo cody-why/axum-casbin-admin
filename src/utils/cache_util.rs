@@ -11,7 +11,7 @@
 /// impl_cache!(SysRole, 30);
 /// // impl MyCache, cache SysUser
 /// struct MyCache {}
-/// impl_cache!(MyCache=>Arc<user::SysUser>, 30*60);
+/// impl_cache!(MyCache=>Arc<SysUser>, 30*60);
 /// ```
 #[macro_export]
 macro_rules! impl_cache {
@@ -39,7 +39,7 @@ macro_rules! impl_cache {
     ($table:ty=>$container:path, $idl_secs:expr, $live_secs:expr) => {
         #[allow(unused)]
         impl $table {
-            const CACHEKEY: &'static str = "ckey";
+            // const CACHEKEY: &'static str = "ckey";
             /// cache instance
             pub fn cache() -> &'static mini_moka::sync::Cache<String, $container> {
                 use std::{sync::OnceLock, time::Duration};
@@ -63,32 +63,21 @@ macro_rules! impl_cache {
                     }
                 })
             }
-            /// get cache data by default key
-            pub fn get_cached() -> Option<$container>{
-                Self::get_cache_by(Self::CACHEKEY)
-            }
-            /// set cache data by default key
-            pub fn set_cached(data: $container) {
-                Self::set_cache_by(Self::CACHEKEY, data);
-            }
-            /// remove cache data by default key
-            pub fn remove_cached() {
-                Self::remove_cache_by(Self::CACHEKEY);
-            }
+
             /// get cache data by key
-            pub fn get_cache_by(key: impl Into<String>) -> Option<$container>{
+            pub fn get_cache(key: impl Into<String>) -> Option<$container>{
                 Self::cache().get(&key.into())
             }
             /// set cache data by key
-            pub fn set_cache_by(key: impl Into<String>, data: $container) {
+            pub fn set_cache(key: impl Into<String>, data: $container) {
                 Self::cache().insert(key.into(), data);
             }
             /// remove cache data by key
-            pub fn remove_cache_by(key: impl Into<String>) {
+            pub fn remove_cache(key: impl Into<String>) {
                 Self::cache().invalidate(&key.into());
             }
             /// remove all cache data
-            pub fn remove_cache_all() {
+            pub fn remove_all_cache() {
                 Self::cache().invalidate_all();
             }
 
@@ -107,47 +96,58 @@ macro_rules! impl_cache_db {
         impl $table {
             /// select all from db，cache it
             pub async fn select_all_cache(rb: &rbatis::RBatis) -> rbatis::Result<Vec<$table>> {
-                if let Some(v) = Self::get_cached() {
+                if let Some(v) = Self::get_cache("select_all") {
                     return Ok(v);
                 }
                 // let rb = crate::pool!();
                 let result = Self::select_all(rb).await?;
-                Self::set_cached(result.clone());
+                Self::set_cache("select_all", result.clone());
                 Ok(result)
+            }
+
+            pub fn remove_select_all_cache() {
+                Self::remove_cache("select_all");
             }
 
             /// select by id，cache it
-            pub async fn select_by_id<T>(rb: &rbatis::RBatis, id: T) -> rbatis::Result<Vec<$table>>
+            pub async fn select_by_id_cache<T>(rb: &rbatis::RBatis, id: T) -> rbatis::Result<Vec<$table>>
             where
                 T: std::fmt::Display + serde::Serialize,
             {
+                Self::select_by_column_cache(rb, "id", id).await
+            }
+
+            pub fn remove_by_id_cache<T>(id: T)
+            where
+                T: std::fmt::Display,
+            {
                 let key = format!("id_{}", id);
-                if let Some(v) = Self::get_cache_by(&key) {
-                    return Ok(v);
-                }
-                // let rb = crate::pool!();
-                let result = Self::select_by_column(rb, "id", id).await?;
-                if result.len() > 0 {
-                    Self::set_cache_by(&key, result.clone());
-                }
-                Ok(result)
+                Self::remove_cache(&key);
             }
 
             /// select by column，cache it
-            pub async fn select_by_cache<T>(rb: &rbatis::RBatis, column: &str, val: T) -> rbatis::Result<Vec<$table>>
+            pub async fn select_by_column_cache<T>(rb: &rbatis::RBatis, column: &str, val: T) -> rbatis::Result<Vec<$table>>
             where
                 T: std::fmt::Display + serde::Serialize,
             {
                 let key = format!("{}_{}", column, val);
-                if let Some(v) = Self::get_cache_by(&key) {
+                if let Some(v) = Self::get_cache(&key) {
                     return Ok(v);
                 }
                 // let rb = crate::pool!();
                 let result = Self::select_by_column(rb, column, val).await?;
                 if result.len() > 0 {
-                    Self::set_cache_by(&key, result.clone());
+                    Self::set_cache(&key, result.clone());
                 }
                 Ok(result)
+            }
+
+            pub fn remove_by_column_cache<T>(column: &str, val: T)
+            where
+                T: std::fmt::Display,
+            {
+                let key = format!("{}_{}", column, val);
+                Self::remove_cache(&key);
             }
         }
     };

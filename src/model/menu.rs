@@ -30,7 +30,7 @@ impl_select_page!(SysMenu{select_page() =>"
      if do_count == false:
        order by create_time asc"});
 
-// impl_select!(SysMenu{select_by_id(id:i32) -> Option => "`where id = #{id} limit 1`"});
+// impl_select!(SysMenu{select_by_id_cache(id:i32) -> Option => "`where id = #{id} limit 1`"});
 
 impl_select!(SysMenu{select_by_ids(ids:&[i32]) -> Vec => "`where id in ${ids.sql()}  and status = 1 order by sort asc`"});
 

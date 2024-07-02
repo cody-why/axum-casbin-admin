@@ -157,7 +157,6 @@ dependencies = [
  "axum-test",
  "bb8-redis",
  "bcrypt",
- "bytes",
  "casbin",
  "casbin-rb-adapter",
  "dashmap 6.0.1",
@@ -166,9 +165,7 @@ dependencies = [
  "jsonwebtoken",
  "log4rs",
  "md5",
- "mime",
  "mini-moka",
- "once_cell",
  "parking_lot",
  "rayon",
  "rbatis",
@@ -177,10 +174,8 @@ dependencies = [
  "serde",
  "serde_yaml",
  "sonic-rs",
- "sqlparser",
  "thiserror",
  "tokio",
- "tower",
  "tower-http",
  "tracing",
 ]
@@ -449,9 +444,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.0.101"
+version = "1.0.103"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac367972e516d45567c7eafc73d24e1c193dcf200a8d94e9db7b3d38b349572d"
+checksum = "2755ff20a1d93490d26ba33a6f092a38a508398a5320df5d4b3014fcccce9410"
 
 [[package]]
 name = "cfg-if"
@@ -1215,9 +1210,9 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.21"
+version = "0.4.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
+checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 dependencies = [
  "serde",
 ]
@@ -1291,9 +1286,9 @@ checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
 
 [[package]]
 name = "mime_guess"
-version = "2.0.4"
+version = "2.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4192263c238a5f0d0c6bfd21f336a313a4ce1c450542449ca191bb657b4642ef"
+checksum = "f7c44f8e672c00fe5308fa235f821cb4198414e1c77935c1ab6948d3fd78550e"
 dependencies = [
  "mime",
  "unicase",
@@ -1336,9 +1331,9 @@ dependencies = [
 
 [[package]]
 name = "num-bigint"
-version = "0.4.5"
+version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c165a9ab64cf766f73521c0dd2cfdff64f488b8f0b3e621face3462d3db536d7"
+checksum = "a5e44f723f1133c9deac646763579fdb3ac745e418f2a7af9cd0c431da1f20b9"
 dependencies = [
  "num-integer",
  "num-traits",
@@ -1409,9 +1404,9 @@ dependencies = [
 
 [[package]]
 name = "object"
-version = "0.36.0"
+version = "0.36.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "576dfe1fc8f9df304abb159d767a29d0476f7750fbf8aa7ad07816004a207434"
+checksum = "081b846d1d56ddfc18fdf1a922e4f6e07a11768ea1b92dec44e42b72712ccfce"
 dependencies = [
  "memchr",
 ]
@@ -1700,9 +1695,9 @@ dependencies = [
 
 [[package]]
 name = "rbatis"
-version = "4.5.24"
+version = "4.5.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6153d3f5c0047e4ba7f9faa25c9cab3438bc2190ee11df8a55df98033387a1ca"
+checksum = "08c35cb0f9119977efa65238c1b3b7c2a3ec4a665d2ceaf0a06ee62b4135fcde"
 dependencies = [
  "async-trait",
  "dark-std",
@@ -1826,9 +1821,9 @@ dependencies = [
 
 [[package]]
 name = "rbs"
-version = "4.5.13"
+version = "4.5.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8a1bd696cfe2a7335e38c8ce11d59a111a9fdcc54e43380011b72277aba1d59"
+checksum = "b6b19e99c64f4ca11003c08b05c5d40309faf78bdf5c5ea4cf7ea1954a4b8627"
 dependencies = [
  "indexmap",
  "serde",
@@ -2324,15 +2319,6 @@ checksum = "d91ed6c858b01f942cd56b37a94b3e0a1798290327d1236e4d9cf4eaca44d29d"
 dependencies = [
  "base64ct",
  "der",
-]
-
-[[package]]
-name = "sqlparser"
-version = "0.47.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "295e9930cd7a97e58ca2a070541a3ca502b17f5d1fa7157376d0fabd85324f25"
-dependencies = [
- "log",
 ]
 
 [[package]]

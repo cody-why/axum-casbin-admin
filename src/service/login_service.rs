@@ -22,7 +22,7 @@ pub async fn is_need_wait_login_ex(account: &str) -> Result<u64> {
         .await?;
     let num = num.unwrap_or(0);
 
-    // let retry = LoginRetryNum::get_cache_by(account);
+    // let retry = LoginRetryNum::get_cache(account);
     // if retry.is_none() {
     //     return Ok(0);
     // }
@@ -34,7 +34,7 @@ pub async fn is_need_wait_login_ex(account: &str) -> Result<u64> {
             .ttl(&format!("{}{}", CACHE_KEY_RETRY_TTL, account))
             .await
             .unwrap_or_default();
-        // let retry = LoginRetryTTL::get_cache_by(account);
+        // let retry = LoginRetryTTL::get_cache(account);
         // if retry.is_none() {
         //     return Ok(0);
         // }
@@ -70,7 +70,7 @@ pub async fn add_retry_login_limit_num(account: &str) -> Result<()> {
             context().config.login_fail_retry_wait_sec,
         )
         .await?;
-    // let retry = LoginRetryNum::get_cache_by(account);
+    // let retry = LoginRetryNum::get_cache(account);
     // let retry = match retry {
     //     Some(mut r) => {
     //         r += 1;
@@ -79,8 +79,8 @@ pub async fn add_retry_login_limit_num(account: &str) -> Result<()> {
     //     None => 0,
     // };
 
-    // LoginRetryNum::set_cache_by(account, retry);
-    // LoginRetryTTL::set_cache_by(account, Instant::now());
+    // LoginRetryNum::set_cache(account, retry);
+    // LoginRetryTTL::set_cache(account, Instant::now());
     Ok(())
 }
 
@@ -93,7 +93,7 @@ pub async fn remove_retry_login_limit_num(account: &str) -> Result<()> {
         .remove(&format!("{}{}", CACHE_KEY_RETRY_NUM, account))
         .await?;
 
-    // LoginRetryNum::remove_cache_by(account);
+    // LoginRetryNum::remove_cache(account);
 
     Ok(())
 }

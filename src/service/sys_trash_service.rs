@@ -1,3 +1,4 @@
+use crate::model::trash::SysTrash;
 use crate::pool;
 use crate::service::context;
 use parking_lot::Mutex;
@@ -9,12 +10,8 @@ use rbatis::rbdc::DateTime;
 use rbatis::rbdc::Error;
 use rbs::Value;
 use serde::Serialize;
-use sqlparser::ast::{Delete, FromTable, Statement};
-use sqlparser::dialect::GenericDialect;
-use sqlparser::parser::Parser;
 use std::fmt::Debug;
 use std::time::Duration;
-use crate::model::trash::SysTrash;
 
 /// A trash can service that can recycle data. Retrieve the data, display the trash can data
 #[derive(Debug)]
@@ -52,9 +49,7 @@ impl SysTrashService {
                 create_date: Some(now.clone()),
             });
         }
-        let r = SysTrash::insert_batch(pool!(), &trashes, 20)
-            .await?
-            .rows_affected;
+        let r = SysTrash::insert_batch(pool!(), &trashes, 20).await?.rows_affected;
         let diff = now.clone().0 - self.recycle_date.lock().0.clone();
         if diff > Duration::from_secs(24 * 3600) {
             *self.recycle_date.lock() = now.clone();
@@ -65,9 +60,9 @@ impl SysTrashService {
 
     //recycle trash older than `trash_recycle_days`
     pub async fn recycle(&self) -> Result<u64, Error> {
-        let before = DateTime::now().0.sub(Duration::from_secs(
-            context().config.trash_recycle_days * 24 * 3600,
-        ));
+        let before = DateTime::now()
+            .0
+            .sub(Duration::from_secs(context().config.trash_recycle_days * 24 * 3600));
         let r = SysTrash::delete_by_day_before(pool!(), DateTime(before)).await?;
         Ok(r.rows_affected)
     }
@@ -77,60 +72,56 @@ impl SysTrashService {
 #[rbatis::async_trait]
 impl Intercept for SysTrashService {
     async fn before(
-        &self,
-        _task_id: i64,
-        rb: &dyn Executor,
-        sql: &mut String,
-        args: &mut Vec<Value>,
+        &self, _task_id: i64, rb: &dyn Executor, sql: &mut String, args: &mut Vec<Value>,
         _result: ResultType<&mut Result<ExecResult, Error>, &mut Result<Vec<Value>, Error>>,
     ) -> Result<Option<bool>, Error> {
-        if sql.starts_with("delete from ") {
-            let dialect = GenericDialect {}; // or AnsiDialect
-            let v: Vec<Statement> = Parser::parse_sql(&dialect, &sql.clone())
-                .map_err(|e| Error::from(e.to_string()))?;
-            if v.is_empty() {
-                return Err(Error::from("sql is empty"));
-            }
-            let table = match v.first().unwrap() {
-                Statement::Delete(Delete{ from, .. }) => {
-                    let mut data = "".to_string();
-                    match from {
-                        FromTable::WithFromKeyword(v) => {
-                            for x in v {
-                                let x_str = &format!("{}", x);
-                                data.push_str(x_str.as_str());
-                            }
-                        }
-                        FromTable::WithoutKeyword(v) => {
-                            for x in v {
-                                let x_str = &format!("{}", x);
-                                data.push_str(x_str.as_str());
-                            }
-                        }
-                    }
-                    data
-                }
-                _ => "".to_string(),
-            };
-            if table.is_empty() {
-                return Err(Error::from(format!("sql={} table_name is empty", sql)));
-            }
-            if table.eq("sys_trash") {
-                return Ok(Some(true));
-            }
-            let new_sql = sql.clone().replace(
-                &format!("delete from {}", table),
-                &format!("select * from {}", table),
-            );
-            let data = rb.query(&new_sql, args.clone()).await?;
-            match data {
-                Value::Array(arr) => {
-                    self.add(&table, &arr).await?;
-                }
-                _ => {
-                    return Err(Error::from(format!("data={} not array", data)));
-                }
-            }
+        if !sql.starts_with("delete from") {
+            return Ok(Some(true));
+        }
+        // let dialect = GenericDialect {}; // or AnsiDialect
+        // let v: Vec<Statement> = Parser::parse_sql(&dialect, &sql.clone()).map_err(|e| Error::from(e.to_string()))?;
+        // if v.is_empty() {
+        //     return Err(Error::from("sql is empty"));
+        // }
+        // let table = match v.first().unwrap() {
+        //     Statement::Delete(Delete { from, .. }) => {
+        //         let mut data = "".to_string();
+        //         match from {
+        //             FromTable::WithFromKeyword(v) => {
+        //                 for x in v {
+        //                     let x_str = &format!("{}", x);
+        //                     data.push_str(x_str.as_str());
+        //                 }
+        //             },
+        //             FromTable::WithoutKeyword(v) => {
+        //                 for x in v {
+        //                     let x_str = &format!("{}", x);
+        //                     data.push_str(x_str.as_str());
+        //                 }
+        //             },
+        //         }
+        //         data
+        //     },
+        //     _ => "".to_string(),
+        // };
+        let table = sql.split_whitespace().nth(2).unwrap_or_default();
+        if table.is_empty() {
+            return Err(Error::from(format!("sql={} table_name is empty", sql)));
+        }
+        if table.eq("sys_trash") {
+            return Ok(Some(true));
+        }
+        let new_sql = sql
+            .clone()
+            .replace(&format!("delete from {}", table), &format!("select * from {}", table));
+        let data = rb.query(&new_sql, args.clone()).await?;
+        match data {
+            Value::Array(arr) => {
+                self.add(&table, &arr).await?;
+            },
+            _ => {
+                return Err(Error::from(format!("data={} not array", data)));
+            },
         }
         Ok(Some(true))
     }

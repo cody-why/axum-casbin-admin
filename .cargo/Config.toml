@@ -1,2 +1,2 @@
 [build]
-rustflags = ["-g", "-C", "target-cpu=native"] # for sonic-rs to use SIMD instructions
+# rustflags = ["-g", "-C", "target-cpu=native"] # for sonic-rs to use SIMD instructions

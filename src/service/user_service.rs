@@ -51,7 +51,6 @@ pub async fn login(item: UserLoginReq) -> Result<String> {
     Ok(token)
 }
 
-
 pub async fn query_user_role(item: QueryUserRoleReq) -> Result<QueryUserRoleData> {
     let rb = pool!();
 
@@ -94,7 +93,7 @@ pub async fn update_user_role(item: UpdateUserRoleReq) -> Result<bool> {
     //     })
     // }
     // let result = SysUserRole::insert_batch(rb, &sys_role_user_list, len as u64).await?;
-    // SysUserRole::remove_cached();
+    // SysUserRole::remove_select_all_cache();
 
     let _ = CasbinService::update_user_roles(user_id, &role_ids).await?;
 
@@ -103,7 +102,7 @@ pub async fn update_user_role(item: UpdateUserRoleReq) -> Result<bool> {
 
 pub async fn query_user_menu(content: UserContext) -> Result<QueryUserMenuData> {
     let rb = pool!();
-    let result = SysUser::select_by_id(rb, content.id).await?;
+    let result = SysUser::select_by_id_cache(rb, content.id).await?;
 
     let user = match result.first() {
         None => return Error::err("用户不存在"),
@@ -119,7 +118,7 @@ pub async fn query_user_menu(content: UserContext) -> Result<QueryUserMenuData> 
         // let sys_menu_list = SysMenu::select_by_user_id(rb, content.id).await?;
         // let menu_ids = CasbinService::get_user_menu_ids(content.id).await;
         let menu_ids = get_role_menu_ids(&roles).await?;
-        // tracing::debug!("menu_ids: {:?}", menu_ids);
+        // tracing::warn!("menu_ids: {:?}", menu_ids);
         let sys_menu_list = SysMenu::select_all_cache(rb).await?;
         sys_menu_list
             .into_iter()
@@ -195,13 +194,13 @@ pub async fn user_update(item: UserUpdateReq) -> Result<u64> {
         return Error::err("不能修改超级管理员");
     }
     let rb = pool!();
-    let result = SysUser::select_by_id(rb, item.id).await?;
+    let result = SysUser::select_by_id_cache(rb, item.id).await?;
 
     match result.first() {
         None => Error::err("用户不存在"),
         Some(_user) => {
             let result = UserUpdateReq::update_by_column(rb, &item, "id").await?;
-            SysUser::remove_cache_by(format!("id_{}", item.id));
+            SysUser::remove_by_id_cache(item.id);
             Ok(result.rows_affected)
         },
     }
@@ -217,7 +216,7 @@ pub async fn user_delete(item: UserDeleteReq) -> Result<u64> {
     }
 
     for id in &ids {
-        SysUser::remove_cache_by(format!("id_{}", id));
+        SysUser::remove_by_id_cache(id);
     }
     let result = SysUser::delete_in_column(rb, "id", &ids).await?;
 
@@ -228,7 +227,7 @@ pub async fn user_delete(item: UserDeleteReq) -> Result<u64> {
 pub async fn update_user_password(item: UpdateUserPwdReq) -> Result<u64> {
     let rb = pool!();
 
-    let result = SysUser::select_by_id(rb, item.id).await?;
+    let result = SysUser::select_by_id_cache(rb, item.id).await?;
 
     match result.first() {
         None => Error::err("用户不存在"),
@@ -239,7 +238,7 @@ pub async fn update_user_password(item: UpdateUserPwdReq) -> Result<u64> {
             let id = user.id.unwrap();
             let password = Password::hash(&item.new_password);
             let result = SysUser::update_password(rb, id, &password).await?;
-            SysUser::remove_cache_by(format!("id_{}", id));
+            SysUser::remove_by_id_cache(id);
             if result.rows_affected == 1 {
                 Ok(1)
             } else {

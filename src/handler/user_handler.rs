@@ -37,7 +37,6 @@ pub async fn query_user_role(Json(item): Json<QueryUserRoleReq>) -> impl IntoRes
 }
 
 pub async fn update_user_role(Json(item): Json<UpdateUserRoleReq>) -> impl IntoResponse {
-    info!("update_user_role params: {:?}", item);
     let result = user_service::update_user_role(item).await;
     Response::result(result)
 }

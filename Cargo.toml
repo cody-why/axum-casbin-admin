@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 axum ={ version = "0.7" }
 tokio ={ version = "1",features = ["full"]}
-tower = { version = "0.4", features = ["util", "timeout"] }
+# tower = { version = "0.4", features = ["util", "timeout"] }
 tower-http = { version = "0.5", features = ["cors","trace","fs"] }
 
 serde = { version = "1.0", features = ["derive"] }
@@ -34,12 +34,12 @@ thiserror = "1.0"
 bcrypt = "0.15"
 md5="0.7"
 
-sqlparser = "0.47"
+# sqlparser = "0.47"
 parking_lot = "0.12"
 rayon = "1.10"
 dashmap = {version = "6.0", features = ["rayon"]}
 async-trait = "0.1"
-once_cell = "1.19"
+# once_cell = "1.19"
 # lazy_static = "1"
 
 casbin-rb-adapter = {version = "0.1", features = ["tracing"]}
@@ -48,9 +48,10 @@ casbin = {version = "2.2"}
 mini-moka = "0.10"
 
 http-body-util = "0.1"
-bytes = "1.6"
-mime = "0.3"
 axum-serde = "0.5"
+
+# bytes = "1.6"
+# mime = "0.3"
 
 
 

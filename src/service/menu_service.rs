@@ -29,7 +29,7 @@ pub async fn menu_save(item: MenuSaveReq) -> Result<u64> {
     let sys_menu = SysMenu::from(item);
 
     let result = SysMenu::insert(rb, &sys_menu).await?;
-    SysMenu::remove_cached();
+    SysMenu::remove_select_all_cache();
     Ok(result.rows_affected)
 }
 
@@ -38,7 +38,7 @@ pub async fn menu_update(item: MenuUpdateReq) -> Result<u64> {
     let rb = pool!();
     let sys_menu = SysMenu::from(item);
     let result = SysMenu::update_by_column(rb, &sys_menu, "id").await?;
-    SysMenu::remove_cached();
+    SysMenu::remove_select_all_cache();
     Ok(result.rows_affected)
 }
 
@@ -51,13 +51,13 @@ pub async fn menu_delete(item: MenuDeleteReq) -> Result<u64> {
         let menus = SysMenu::select_by_column(rb, "parent_id", &id).await?;
         if !menus.is_empty() {
             if count > 0 {
-                SysMenu::remove_cached();
+                SysMenu::remove_select_all_cache();
             }
             return Error::err("有下级菜单,不能删除");
         }
         let result = SysMenu::delete_by_column(rb, "id", &id).await?;
         count += result.rows_affected;
     }
-    SysMenu::remove_cached();
+    SysMenu::remove_select_all_cache();
     Ok(count)
 }

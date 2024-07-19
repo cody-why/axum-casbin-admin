@@ -19,14 +19,18 @@ sonic-rs = "0.3" #json
 rbs = { version = "4.5"}
 rbatis = { version = "4.5"} #"debug_mode"]
 rbdc-mysql={version="4.5"}
+rbdc-pool-deadpool = {version = "4.5", path = "../cargo-libs/rbdc-pool-deadpool"}
+# rbdc-pool-mobc = "4.5"
+
+# redis = "0.25"
+# bb8-redis = "0.15"
+deadpool-redis = "0.15"
 
 log4rs = "1.3"
 tracing = "0.1"
 
 jsonwebtoken = "9.3"
 
-# redis = "0.25"
-bb8-redis = "0.15"
 
 futures = { version = "0.3", default-features = false }
 thiserror = "1.0"

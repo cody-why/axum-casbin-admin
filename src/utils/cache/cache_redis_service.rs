@@ -1,7 +1,7 @@
 use crate::error::{Error, Result};
 use crate::redis_conn;
+use crate::utils::redis::AsyncCommands;
 use async_trait::async_trait;
-use bb8_redis::redis::AsyncCommands;
 
 use super::cache_service::ICacheService;
 

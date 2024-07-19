@@ -1,16 +1,5 @@
-###登录 login
-# @name login
-POST {{host}}/admin/login
-Content-Type: application/json
 
-{
-  "mobile": "18500000000",
-  "password": "e10adc3949ba59abbe56e057f20f883e"
-}
-
-@token = {{login.response.body.data}}
-
-###菜单列表 menu_list
+### 菜单列表
 POST {{host}}/admin/menu_list
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -18,7 +7,8 @@ Authorization: Bearer {{token}}
 {
   "menu_name": ""
 }
-###新增菜单 menu_save
+
+### 新建菜单
 POST {{host}}/admin/menu_save
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -36,7 +26,7 @@ Authorization: Bearer {{token}}
   "status": 1
 }
 
-###删除菜单 menu_delete
+### 删除菜单
 POST {{host}}/admin/menu_delete
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -44,7 +34,8 @@ Authorization: Bearer {{token}}
 {
   "ids": [79]
 }
-###更新菜单 menu_update
+
+### 更新菜单
 POST {{host}}/admin/menu_update
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -62,5 +53,3 @@ Authorization: Bearer {{token}}
   "sort": 1,
   "status": 1
 }
-
-

@@ -1,3 +1,8 @@
+/*
+ * @Date: 2024-06-28 15:21:48
+ * @LastEditTime: 2024-07-18 16:45:14
+ */
+
 use rbatis::rbdc::datetime::DateTime;
 use rbatis::rbdc::db::ExecResult;
 use rbatis::{impl_select, impl_select_page, py_sql, RBatis};
@@ -22,11 +27,11 @@ impl_select_page!(SysUser{select_page() =>"
      if do_count == false:
        order by create_time desc"});
 
-impl_select_page!(SysUser{select_page_by_name(mobile: &str, status: &str) =>"
+impl_select_page!(SysUser{select_page_by_name(mobile: &str, status: Option<i32>) =>"
       where 1=1
      if mobile != null && mobile != '' :
        ` and mobile = #{mobile} `
-     if status != null && status != '' :
+     if status != null :
        ` and status = #{status} `
      if do_count == false:
         ` order by create_time desc `"});

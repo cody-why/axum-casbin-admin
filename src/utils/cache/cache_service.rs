@@ -8,12 +8,15 @@ use serde::Serialize;
 use std::fmt::Debug;
 use std::ops::Deref;
 
+// use std::future::Future;
+// pub type BoxFuture<'a, T> = std::pin::Pin<Box<dyn Future<Output = T> + Send + 'a>>;
+
 #[async_trait]
 pub trait ICacheService: Sync + Send + Debug {
     /// set key-value, ex seconds expire, 0 = no expire
     async fn set_string(&self, k: &str, v: &str, ex: u64) -> Result<String>;
+    // fn set_string(&self, k: &str, v: &str, ex: u64) -> dyn Future<Output = Result<String>> + Send;
 
-    /// get value from key
     async fn get_string(&self, k: &str) -> Result<Option<String>>;
 
     /// get key  Time To Live(secs), -2 = key does not exist, -1 = expire, 0 = no expire, >0 = seconds until expire
@@ -86,7 +89,8 @@ impl CacheService {
     {
         let r = self.get_string(k).await?;
         let r = r.unwrap_or("null".to_string());
-        let data: T = sonic_rs::from_str(r.as_str()).map_err(|e| Error::Internal(format!("CacheService get_json fail:{}", e)))?;
+        let data: T =
+            sonic_rs::from_str(r.as_str()).map_err(|e| Error::Internal(format!("CacheService get_json fail:{}", e)))?;
 
         Ok(data)
     }

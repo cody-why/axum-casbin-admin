@@ -1,17 +1,36 @@
-refresh_rate: 30 seconds
+refresh_rate: 60 seconds
 appenders:
   stdout:
     kind: console
     encoder:
-      # pattern: "{d(%Y-%m-%d %H:%M:%S)} [{f}:{L}] {h({l})} [{M}] - {m}{n}"
       pattern: "{d(%Y-%m-%d %H:%M:%S)} {h({l})} - {m}{n} - [{M}] [{f}:{L}]{n}"
-  requests:
-    kind: file
-    path: "target/log.nosync/file-{d(%Y-%m-%d)}.log"
+  # my_file_appender:
+  #   kind: file
+  #   path: "target/log.nosync/test.log"
+  #   encoder:
+  #     pattern: "{d(%Y-%m-%d %H:%M:%S)} {h({l})} - {m}{n} - [{M}] [{f}:{L}]{n}"
+  my_rolling_appender:
+    kind: rolling_file
+    path: "target/log.nosync/test.log"
     encoder:
       pattern: "{d(%Y-%m-%d %H:%M:%S)} {h({l})} - {m}{n} - [{M}] [{f}:{L}]{n}"
+    policy:
+      kind: compound
+      # trigger:
+      #   kind: size
+      #   limit: 1mb
+      trigger:
+        kind: time
+        interval: 1 day
+        modulate: true
+        max_random_delay: 0
+      roller:
+        kind: fixed_window
+        base: 1
+        count: 15
+        pattern: "target/log.nosync/test.{}.log"
 root:
   level: debug
   appenders:
     - stdout
-    # - requests
+    # - my_rolling_appender

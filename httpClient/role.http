@@ -1,16 +1,6 @@
-###登录 login
-# @name login
-POST {{host}}/admin/login
-Content-Type: application/json
+# @import ./user.http
 
-{
-  "mobile": "18500000000",
-  "password": "e10adc3949ba59abbe56e057f20f883e"
-}
-
-@token = {{login.response.body.data}}
-
-###查询角色菜单 query_role_menu
+### 查询角色菜单 query_role_menu
 POST {{host}}/admin/query_role_menu
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -19,7 +9,7 @@ Authorization: Bearer {{token}}
   "role_id": 3
 }
 
-###更新角色菜单 update_role_menu
+### 更新角色菜单 update_role_menu
 POST {{host}}/admin/update_role_menu
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -29,7 +19,7 @@ Authorization: Bearer {{token}}
   "menu_ids": [1,2,3]
 }
 
-###角色列表 role_list
+### 角色列表 role_list
 POST {{host}}/admin/role_list
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -39,7 +29,7 @@ Authorization: Bearer {{token}}
   "pageSize": 10
 }
 
-###新增角色 role_save
+### 新增角色 role_save
 POST {{host}}/admin/role_save
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -51,7 +41,7 @@ Authorization: Bearer {{token}}
   "status": 1
 }
 
-###删除角色 role_delete
+### 删除角色 role_delete
 POST {{host}}/admin/role_delete
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -60,7 +50,7 @@ Authorization: Bearer {{token}}
   "ids": [11]
 }
 
-###更新角色 role_update
+### 更新角色 role_update
 POST {{host}}/admin/role_update
 Content-Type: application/json
 Authorization: Bearer {{token}}

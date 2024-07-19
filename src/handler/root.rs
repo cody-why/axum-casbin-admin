@@ -1,12 +1,20 @@
+/*
+ * @Date: 2024-06-28 15:21:48
+ * @LastEditTime: 2024-07-15 11:12:13
+ */
+
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{middleware, Router};
-use tower_http::{cors::{Any, CorsLayer},
-                 services::{ServeDir, ServeFile}};
+use tower_http::{
+    cors::{Any, CorsLayer},
+    services::{ServeDir, ServeFile},
+};
 
 use super::{menu_handler, role_handler, user_handler};
 use crate::middleware::limit::limit_layer;
 use crate::middleware::logger::log_layer;
+use crate::Json;
 use crate::{middleware::auth::auth_layer, pool};
 
 pub fn app() -> Router {
@@ -34,13 +42,13 @@ pub fn app() -> Router {
         .layer(middleware::from_fn(log_layer))
         // .layer(_trace_layer)
         .merge(static_file())
-        .layer(cors_layer)
         .route("/status", get(db_status))
+        .layer(cors_layer)
 }
 
 async fn db_status() -> impl IntoResponse {
     let state = pool!().get_pool().expect("pool not init!").state().await;
-    state.to_string()
+    Json(state)
 }
 
 pub fn static_file() -> Router {

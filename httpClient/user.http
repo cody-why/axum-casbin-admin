@@ -1,9 +1,10 @@
-#@host = http://localhost:8000
+@token = {{ $global.token }}
 
-###db status
+### 查看数据库连接状态
 GET {{host}}/status
 
-###登录 login
+
+### 登陆 获取token
 # @name login
 POST {{host}}/admin/login
 Content-Type: application/json
@@ -16,28 +17,30 @@ Content-Type: application/json
 # idea
 > {% client.global.set("token", response.body.data); %}
 
-# vscode
-@token = {{login.response.body.data}}
+# vscode httpYac
+{{
+  $global.token=response.parsedBody.data;
+}}
 
 
-###查询用户菜单 query_user_menu
+### 查询用户菜单
 GET {{host}}/admin/query_user_menu
 Authorization: Bearer {{token}}
 
 
-###用户列表 user_list
+### 获取用户列表
 POST {{host}}/admin/user_list
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "current": 1,
+  "pageNo": 1,
   "pageSize": 10,
-  "mobile": "18613030352",
+  "mobile": "",
   "status": 1
 }
 
-###新增用户 user_save
+### 保存用户信息
 POST {{host}}/admin/user_save
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -48,7 +51,7 @@ Authorization: Bearer {{token}}
   "remark": "test"
 }
 
-###删除用户 user_delete
+### 删除用户
 POST {{host}}/admin/user_delete
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -57,7 +60,7 @@ Authorization: Bearer {{token}}
   "ids": [13]
 }
 
-###更新用户 user_update
+### 更新用户信息
 POST {{host}}/admin/user_update
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -71,8 +74,7 @@ Authorization: Bearer {{token}}
   "status": 1
 }
 
-
-###修改密码 update_user_password
+### 更新用户密码
 POST {{host}}/admin/update_user_password
 Content-Type: application/json
 Authorization: Bearer {{token}}

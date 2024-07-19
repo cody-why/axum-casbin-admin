@@ -169,7 +169,8 @@ pub async fn user_list(item: UserListReq) -> Result<Page<UserListData>> {
     let rb = pool!();
 
     let mobile = item.mobile.as_deref().unwrap_or_default();
-    let status = item.status.as_deref().unwrap_or_default();
+    // let status = item.status.as_deref().unwrap_or_default();
+    let status = item.status;
     let page_req = PageRequest::new(item.page_no, item.page_size);
     let result = SysUser::select_page_by_name(rb, &page_req, mobile, status).await?;
     let page = Page::<UserListData>::from(result);

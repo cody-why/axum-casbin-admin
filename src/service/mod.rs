@@ -14,7 +14,6 @@ pub mod user_service;
 pub mod casbin_service;
 pub mod login_service;
 
-// /// all the service struct
 // pub static CONTEXT: Lazy<ServiceContext> = Lazy::new(||{
 //     ServiceContext::new()
 // });

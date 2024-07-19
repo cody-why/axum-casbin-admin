@@ -1,7 +1,7 @@
 /target
 .idea
-log
+logs
 *.log
-log.*
+log
 .env
-*.lock
+Cargo.lock

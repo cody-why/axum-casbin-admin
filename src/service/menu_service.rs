@@ -9,7 +9,8 @@ pub async fn menu_list(item: MenuListReq) -> Result<Vec<MenuListData>> {
     let rb = pool!();
     let result = SysMenu::select_all_cache(rb).await?;
     // 使用闭包来定义过滤条件
-    let status = item.status.map(|x| x.parse::<i32>().unwrap_or(0));
+    // let status = item.status.map(|x| x.parse::<i32>().unwrap_or(0));
+    let status = item.status;
     let filter_condition = |x: &SysMenu| -> bool {
         match &status {
             Some(s) => x.status == *s,

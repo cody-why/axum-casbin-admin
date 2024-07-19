@@ -56,13 +56,12 @@ pub struct QueryUserMenuReq {
     pub token: String,
 }
 
-#[derive(Debug, Serialize)]
-pub struct QueryUserMenuResp {
-    pub msg: String,
-    pub code: i32,
-    pub data: QueryUserMenuData,
-    pub success: bool,
-}
+// #[derive(Debug, Serialize)]
+// pub struct QueryUserMenuResp {
+//     pub msg: String,
+//     pub code: i32,
+//     pub data: QueryUserMenuData,
+// }
 
 #[derive(Debug, Serialize)]
 pub struct QueryUserMenuData {
@@ -103,7 +102,7 @@ pub struct UserListReq {
     #[serde(rename = "pageSize")]
     pub page_size: u64,
     pub mobile: Option<String>,
-    pub status: Option<String>,
+    pub status: Option<i32>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

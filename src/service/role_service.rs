@@ -13,7 +13,7 @@ pub async fn role_list(item: RoleListReq) -> Result<Page<RoleListData>> {
     let rb = pool!();
 
     let role_name = item.role_name.as_deref().unwrap_or_default();
-    let status = item.status.as_deref().unwrap_or_default();
+    let status = item.status;
 
     let page_req = PageRequest::new(item.page_no, item.page_size);
     let result = SysRole::select_page_by_name(rb, &page_req, role_name, status).await?;

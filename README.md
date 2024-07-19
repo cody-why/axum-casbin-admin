@@ -10,7 +10,6 @@
 # 本地启动
 
 - 创建数据库并导入`\docs\sql`脚本
-- 修改src/utils/db.rs代码中的数据库信息: rb.init(rbdc_mysql::driver::MysqlDriver {}, url).unwrap();
 - 启动 cargo run 
 - 验证脚本在httpClient目录下,请求接口前要先执行登录接口(user.http文件中)
 

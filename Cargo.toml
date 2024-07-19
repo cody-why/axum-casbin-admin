@@ -19,7 +19,9 @@ sonic-rs = "0.3" #json
 rbs = { version = "4.5"}
 rbatis = { version = "4.5"} #"debug_mode"]
 rbdc-mysql={version="4.5"}
-rbdc-pool-deadpool = {version = "4.5", path = "../cargo-libs/rbdc-pool-deadpool"}
+# 作者没有升级deadpool最新版本，所以这里使用了fork版本
+rbdc-pool-deadpool = {version = "4.5", git = "https://github.com/cody-why/rbdc-pool-deadpool"}
+# path = "../cargo-libs/rbdc-pool-deadpool"
 # rbdc-pool-mobc = "4.5"
 
 # redis = "0.25"

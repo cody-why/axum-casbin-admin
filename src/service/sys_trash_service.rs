@@ -117,7 +117,7 @@ impl Intercept for SysTrashService {
         let data = rb.query(&new_sql, args.clone()).await?;
         match data {
             Value::Array(arr) => {
-                self.add(&table, &arr).await?;
+                self.add(table, &arr).await?;
             },
             _ => {
                 return Err(Error::from(format!("data={} not array", data)));

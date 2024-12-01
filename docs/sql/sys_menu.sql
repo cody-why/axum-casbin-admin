@@ -15,7 +15,7 @@ create table sys_menu
     create_time datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '修改时间',
     constraint menu_name_uindex
-        unique (menu_name, parent_id)
+        unique (menu_name)
 )
     comment '菜单信息';
 

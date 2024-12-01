@@ -30,11 +30,15 @@ impl Error {
 }
 
 impl Error {
-    pub fn msg(&self) -> String {
-        match self {
-            Error::E(s) => s.clone(),
-            _ => "Internal Server Error".to_string(),
-        }
+    pub fn to_msg(&self) -> (i32, String) {
+        let msg = match self {
+            Error::E(s) => (1, s.clone()),
+            _ => {
+                // tracing::info!("error: {:?}", self);
+                (2, "Failed".to_string())
+            },
+        };
+        (msg.0, msg.1)
     }
 }
 

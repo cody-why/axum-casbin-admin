@@ -1,14 +1,15 @@
 use crate::model::menu::SysMenu;
 use rbatis::rbdc::DateTime;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct MenuListReq {
     pub menu_name: Option<String>,
     pub status: Option<i32>,
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone, ToSchema)]
 pub struct MenuListData {
     pub id: i32,
     pub sort: i32,
@@ -44,7 +45,7 @@ impl From<SysMenu> for MenuListData {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct MenuSaveReq {
     pub sort: i32,
     pub status: i32,
@@ -77,7 +78,7 @@ impl From<MenuSaveReq> for SysMenu {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct MenuUpdateReq {
     pub id: i32,
     pub sort: i32,
@@ -114,7 +115,7 @@ impl From<MenuUpdateReq> for SysMenu {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct MenuDeleteReq {
     pub ids: Vec<i32>,
 }

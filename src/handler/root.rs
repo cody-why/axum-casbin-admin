@@ -1,6 +1,6 @@
 /*
  * @Date: 2024-06-28 15:21:48
- * @LastEditTime: 2024-07-15 11:12:13
+ * @LastEditTime: 2024-07-24 20:59:49
  */
 
 use axum::response::IntoResponse;
@@ -11,7 +11,7 @@ use tower_http::{
     services::{ServeDir, ServeFile},
 };
 
-use super::{menu_handler, role_handler, user_handler};
+use super::{apidoc, menu_handler, role_handler, user_handler};
 use crate::middleware::limit::limit_layer;
 use crate::middleware::logger::log_layer;
 use crate::Json;
@@ -41,9 +41,10 @@ pub fn app() -> Router {
         .layer(middleware::from_fn(limit_layer))
         .layer(middleware::from_fn(log_layer))
         // .layer(_trace_layer)
-        .merge(static_file())
+        .merge(apidoc::router())
         .route("/status", get(db_status))
         .layer(cors_layer)
+        .merge(static_file())
 }
 
 async fn db_status() -> impl IntoResponse {

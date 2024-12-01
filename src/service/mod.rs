@@ -2,7 +2,7 @@ use futures::executor::block_on;
 use rbatis::RBatis;
 use std::sync::OnceLock;
 
-use crate::config::{init_logger, Config};
+use crate::config::Config;
 use crate::utils::cache::cache_service::CacheService;
 use crate::utils::db::init_db;
 
@@ -39,7 +39,6 @@ pub struct ServiceContext {
 
 impl ServiceContext {
     pub fn new() -> Self {
-        init_logger();
         let config = Config::new();
         let cache_service = CacheService::build(&config.cache_type).unwrap();
 

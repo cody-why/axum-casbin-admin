@@ -15,7 +15,5 @@ create table sys_user_role
 )
     comment '角色用户关联表';
 
-INSERT INTO sys_user_role (id, user_id, role_id, status) VALUES (1, 2, 3, 1);
-INSERT INTO sys_user_role (id, user_id, role_id, status) VALUES (2, 12, 3, 1);
-INSERT INTO sys_user_role (id, user_id, role_id, status) VALUES (4, 3, 3, 1);
-INSERT INTO sys_user_role (id, user_id, role_id, status) VALUES (5, 1, 1, 1);
+INSERT INTO sys_user_role (id, user_id, role_id, status) VALUES (1, 1, 1, 1);
+

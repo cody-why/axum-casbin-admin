@@ -1,36 +1,28 @@
-use crate::Json;
 use axum::response::IntoResponse;
 use serde::Serialize;
 use std::fmt::Debug;
+use utoipa::ToSchema;
 
-use crate::error::Error;
+use crate::{error::Error, Json};
 
 pub mod menu_vo;
 pub mod role_vo;
 pub mod user_vo;
 
-/// 统一返回vo
-#[derive(Serialize, Debug, Clone)]
+/// 统一返回Response
+#[derive(Serialize, Debug, Clone, ToSchema)]
 pub struct BaseResponse<T>
 where
     T: Serialize + Debug,
 {
+    #[schema(example = 0)]
     pub code: i32,
+    #[schema(example = "")]
     pub msg: Option<String>,
     pub data: Option<T>,
-}
-
-impl<T> BaseResponse<T>
-where
-    T: Serialize + Debug,
-{
-    pub fn err(code: i32, msg: impl ToString) -> Self {
-        Self {
-            code,
-            msg: Some(msg.to_string()),
-            data: None,
-        }
-    }
+    /// 统一分页总数
+    #[schema(example = 0)]
+    pub total: Option<u64>,
 }
 
 impl<T> IntoResponse for BaseResponse<T>
@@ -38,6 +30,7 @@ where
     T: Serialize + Debug,
 {
     fn into_response(self) -> axum::response::Response {
+        tracing::info!("{:?}", self);
         Json(self).into_response()
     }
 }
@@ -59,22 +52,13 @@ where
     T: Serialize + Debug,
 {
     fn from(e: Error) -> Self {
-        match e {
-            Error::E(msg) => Self {
-                code: 1,
-                msg: Some(msg),
-                data: None,
-            },
-            Error::Code(_code, msg) => Self {
-                code: _code,
-                msg: Some(msg),
-                data: None,
-            },
-            _ => Self {
-                code: 2,
-                msg: Some("操作失败".to_string()),
-                data: None,
-            },
+        tracing::warn!("error: {:?}", e);
+        let (code, msg) = e.to_msg();
+        Self {
+            code,
+            msg: Some(msg),
+            data: None,
+            total: None,
         }
     }
 }
@@ -86,8 +70,9 @@ where
     fn from(data: T) -> Self {
         Self {
             code: 0,
-            msg: Some("操作成功".to_string()),
+            msg: Some("Success".to_string()),
             data: Some(data),
+            total: None,
         }
     }
 }
@@ -107,14 +92,14 @@ where
         Self(Err(err.into()))
     }
 
-    pub fn result(result: core::result::Result<T, impl Into<Error>>) -> Self {
+    pub fn result(result: Result<T, impl Into<Error> + Debug>) -> Self {
         match result {
             Ok(data) => Self(Ok(data)),
             Err(err) => Self(Err(err.into())),
         }
     }
 
-    pub fn result_page(result: core::result::Result<T, impl Into<Error>>, total: u64) -> Json<ResponsePage<T>> {
+    pub fn result_page(result: Result<T, impl Into<Error> + Debug>, total: u64) -> BaseResponse<T> {
         match result {
             Ok(data) => ok_result_page(data, total),
             Err(err) => err_result_page::<T>(err),
@@ -131,33 +116,23 @@ where
     }
 }
 
-/// 统一返回分页
-#[derive(Serialize, Debug, Clone)]
-pub struct ResponsePage<T>
-where
-    T: Serialize + Debug,
-{
-    pub code: i32,
-    pub msg: String,
-    pub total: u64,
-    pub data: Option<T>,
-}
-
-fn ok_result_page<T: Serialize + Debug>(data: T, total: u64) -> Json<ResponsePage<T>> {
-    Json(ResponsePage {
-        msg: "操作成功".to_string(),
+fn ok_result_page<T: Serialize + Debug>(data: T, total: u64) -> BaseResponse<T> {
+    BaseResponse {
+        msg: Some("Success".to_string()),
         code: 0,
         data: Some(data),
-        total,
-    })
+        total: Some(total),
+    }
 }
 
-fn err_result_page<T: Serialize + Debug>(err: impl Into<Error>) -> Json<ResponsePage<T>> {
-    let msg = err.into().msg();
-    Json(ResponsePage {
-        msg,
-        code: 1,
+fn err_result_page<T: Serialize + Debug>(err: impl Into<Error>) -> BaseResponse<T> {
+    let err = err.into();
+    tracing::warn!("error: {:?}", err);
+    let (code, msg) = err.to_msg();
+    BaseResponse {
+        msg: Some(msg),
+        code,
         data: None,
-        total: 0,
-    })
+        total: None,
+    }
 }

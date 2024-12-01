@@ -5,6 +5,7 @@ use crate::model::user::SysUser;
 use crate::service::login_service;
 use crate::utils::jwt_util::JWTToken;
 use crate::utils::password::Password;
+use crate::vo::role_vo::RoleListData;
 use crate::vo::user_vo::*;
 use crate::Result;
 use crate::{context, pool, Error};
@@ -61,7 +62,7 @@ pub async fn query_user_role(item: QueryUserRoleReq) -> Result<QueryUserRoleData
     let user_role_ids = CasbinService::get_roles_for_user(item.user_id).await;
 
     let sys_role = SysRole::select_all_cache(rb).await?;
-    let sys_role_list: Vec<UserRoleList> = sys_role.into_iter().map(|x| x.into()).collect();
+    let sys_role_list: Vec<RoleListData> = sys_role.into_iter().map(|x| x.into()).collect();
 
     let result = QueryUserRoleData {
         sys_role_list,

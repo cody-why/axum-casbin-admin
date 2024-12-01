@@ -2,8 +2,9 @@ use crate::model::menu::SysMenu;
 use crate::model::role::SysRole;
 use rbatis::rbdc::DateTime;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct RoleListReq {
     #[serde(rename = "pageNo")]
     pub page_no: u64,
@@ -13,7 +14,7 @@ pub struct RoleListReq {
     pub status: Option<i32>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct RoleListData {
     pub id: i32,
     pub status: i32,
@@ -36,7 +37,7 @@ impl From<SysRole> for RoleListData {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct RoleSaveReq {
     pub role_name: String,
     pub status: i32,
@@ -57,7 +58,7 @@ impl From<RoleSaveReq> for SysRole {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct RoleUpdateReq {
     pub id: i32,
     pub status: i32,
@@ -81,23 +82,23 @@ impl From<RoleUpdateReq> for SysRole {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct RoleDeleteReq {
     pub ids: Vec<i32>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct QueryRoleMenuReq {
     pub role_id: i32,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct QueryRoleMenuData {
     pub role_menus: Vec<i32>,
     pub menu_list: Vec<MenuDataList>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct MenuDataList {
     pub id: i32,
     pub parent_id: i32,
@@ -120,7 +121,7 @@ impl From<SysMenu> for MenuDataList {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct UpdateRoleMenuReq {
     pub menu_ids: Vec<i32>,
     pub role_id: i32,

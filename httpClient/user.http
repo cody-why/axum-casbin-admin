@@ -1,4 +1,4 @@
-@token = {{ $global.token }}
+@token = {{$global.token}}
 
 ### 查看数据库连接状态
 GET {{host}}/status
@@ -46,7 +46,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "mobile": "18613030351",
+  "mobile": "13100131000",
   "user_name": "test",
   "remark": "test"
 }

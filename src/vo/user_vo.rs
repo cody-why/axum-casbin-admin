@@ -1,69 +1,38 @@
 use crate::model::menu::SysMenu;
 use rbatis::rbdc::DateTime;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
-use crate::model::role::SysRole;
 use crate::model::user::SysUser;
 
-#[derive(Debug, Deserialize)]
+use super::role_vo::RoleListData;
+
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct UserLoginReq {
+    #[schema(example = "18500000000")]
     pub mobile: String,
+    #[schema(example = "e10adc3949ba59abbe56e057f20f883e")]
     pub password: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct QueryUserRoleReq {
     pub user_id: u64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct QueryUserRoleData {
-    pub sys_role_list: Vec<UserRoleList>,
+    pub sys_role_list: Vec<RoleListData>,
     pub user_role_ids: Vec<i32>,
 }
 
-#[derive(Debug, Serialize)]
-pub struct UserRoleList {
-    pub id: i32,
-    pub status: i32,
-    pub role_name: String,
-    pub remark: String,
-    pub create_time: String,
-    pub update_time: String,
-}
-
-impl From<SysRole> for UserRoleList {
-    fn from(x: SysRole) -> Self {
-        Self {
-            id: x.id.unwrap(),
-            status: x.status,
-            role_name: x.role_name,
-            remark: x.remark.unwrap_or_default(),
-            create_time: x.create_time.unwrap().to_string(),
-            update_time: x.update_time.unwrap().to_string(),
-        }
-    }
-}
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct UpdateUserRoleReq {
     pub user_id: u64,
     pub role_ids: Vec<i32>,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct QueryUserMenuReq {
-    pub token: String,
-}
-
-// #[derive(Debug, Serialize)]
-// pub struct QueryUserMenuResp {
-//     pub msg: String,
-//     pub code: i32,
-//     pub data: QueryUserMenuData,
-// }
-
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct QueryUserMenuData {
     pub sys_menu: Vec<MenuUserList>,
     pub btn_menu: Vec<String>,
@@ -71,7 +40,7 @@ pub struct QueryUserMenuData {
     pub name: String,
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone, ToSchema)]
 pub struct MenuUserList {
     pub id: i32,
     pub parent_id: i32,
@@ -95,7 +64,7 @@ impl From<SysMenu> for MenuUserList {
         }
     }
 }
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct UserListReq {
     #[serde(rename = "pageNo")]
     pub page_no: u64,
@@ -105,16 +74,7 @@ pub struct UserListReq {
     pub status: Option<i32>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct UserListResp {
-    pub msg: String,
-    pub code: i32,
-    pub success: bool,
-    pub total: u64,
-    pub data: Option<Vec<UserListData>>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserListData {
     pub id: u64,
     pub status: i32,
@@ -138,7 +98,7 @@ impl From<SysUser> for UserListData {
         }
     }
 }
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct UserSaveReq {
     pub mobile: String,
     pub user_name: String,
@@ -161,7 +121,7 @@ impl From<UserSaveReq> for SysUser {
         }
     }
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserUpdateReq {
     pub id: u64,
     pub status: i32,
@@ -174,12 +134,12 @@ pub struct UserUpdateReq {
 
 rbatis::impl_update!(UserUpdateReq {}, "sys_user");
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct UserDeleteReq {
     pub ids: Vec<u64>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct UpdateUserPwdReq {
     pub id: u64,
     pub password: String,

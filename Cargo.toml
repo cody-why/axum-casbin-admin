@@ -9,35 +9,35 @@ edition = "2021"
 axum ={ version = "0.7" }
 tokio ={ version = "1",features = ["full"]}
 # tower = { version = "0.4", features = ["util", "timeout"] }
-tower-http = { version = "0.5", features = ["cors","trace","fs"] }
+tower-http = { version = "0.6", features = ["cors","trace","fs"] }
 
 serde = { version = "1.0", features = ["derive"] }
-# serde_json = "1.0"
+serde_json = "1.0"
 serde_yaml = "0.9"
 sonic-rs = "0.3" #json
+axum-serde = "0.7"
 
 rbs = { version = "4.5"}
 rbatis = { version = "4.5"} #"debug_mode"]
 rbdc-mysql={version="4.5"}
 # 作者没有升级deadpool最新版本，所以这里使用了fork版本
-rbdc-pool-deadpool = {version = "4.5", git = "https://github.com/cody-why/rbdc-pool-deadpool"}
+rbdc-pool-deadpool = {version = "4.5.7", git = "https://github.com/cody-why/rbdc-pool-deadpool"}
 # path = "../cargo-libs/rbdc-pool-deadpool"
 # rbdc-pool-mobc = "4.5"
 
 # redis = "0.25"
 # bb8-redis = "0.15"
-deadpool-redis = "0.15"
+deadpool-redis = "0.18"
 
 log4rs = "1.3"
 tracing = "0.1"
 
 jsonwebtoken = "9.3"
 
-
 futures = { version = "0.3", default-features = false }
-thiserror = "1.0"
+thiserror = "2.0"
 
-bcrypt = "0.15"
+bcrypt = "0.16"
 md5="0.7"
 
 # sqlparser = "0.47"
@@ -54,15 +54,16 @@ casbin = {version = "2.2"}
 mini-moka = "0.10"
 
 http-body-util = "0.1"
-axum-serde = "0.5"
 
-# bytes = "1.6"
-# mime = "0.3"
 
+# openapi
+utoipa = {version = "5", features = ["axum_extras"] }
+utoipa-scalar = {version = "0.2", features = ["axum"] }
+utoipauto = "0.2"
 
 
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 # tikv-jemallocator = "0.5"
 
 [dev-dependencies]
-axum-test = "15.2.0"
+axum-test = "16"

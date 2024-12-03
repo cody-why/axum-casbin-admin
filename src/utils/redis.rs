@@ -65,7 +65,10 @@ async fn test_redis_pool() {
     for i in 0..100 {
         // let _: bool = redis::cmd("SETEX").arg(&format!("key{}", i)).arg(100).arg("value")
         //     .query_async(&mut *conn).await.unwrap();
-        let _: bool = conn.set_ex(&format!("key{}", i), "value", 100).await.unwrap();
+        let _: bool = conn
+            .set_ex(format!("key{}", i), "value", 100)
+            .await
+            .unwrap();
     }
     println!("time set: {:?}", now.elapsed());
 }

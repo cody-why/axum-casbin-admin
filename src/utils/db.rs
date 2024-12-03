@@ -15,6 +15,10 @@ macro_rules! pool {
     };
 }
 
+pub fn get_pool() -> &'static RBatis {
+    &crate::service::context().rb
+}
+
 /// init database pool
 pub async fn init_db(config: &Config, rb: &RBatis) {
     info!("rbatis pool init ({:?})...", config.db.url.split('@').nth(1));
@@ -28,8 +32,10 @@ pub async fn init_db(config: &Config, rb: &RBatis) {
 
     let pool = rb.get_pool().unwrap();
 
-    pool.set_max_open_conns(config.db.max_connections as u64).await;
-    pool.set_max_idle_conns(config.db.min_connections as u64).await;
+    pool.set_max_open_conns(config.db.max_connections as u64)
+        .await;
+    pool.set_max_idle_conns(config.db.min_connections as u64)
+        .await;
     pool.set_timeout(Some(Duration::from_secs(config.db.connect_timeout as u64)))
         .await;
 
@@ -46,5 +52,5 @@ where
 {
     let pool = Pool::new(ConnManager::new(driver, url)?)?;
     rb.init_pool(pool)?;
-    return Ok(());
+    Ok(())
 }

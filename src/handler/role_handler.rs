@@ -33,7 +33,7 @@ where
     request_body = RoleListReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=RoleListData", body = BaseResponse<Vec<RoleListData>>),
+        (status = 200, description = "操作成功, code=0, data=RoleListData", body = Response<Vec<RoleListData>>),
     )
 )]
 pub async fn role_list(Json(item): Json<RoleListReq>) -> impl IntoResponse {
@@ -41,7 +41,7 @@ pub async fn role_list(Json(item): Json<RoleListReq>) -> impl IntoResponse {
     let total = result.as_ref().map(|data| data.total).unwrap_or(0);
     // 转换成前端需要的格式
     let result = result.map(|data| data.records);
-    Response::result_page(result, total)
+    Response::page(result, total)
 }
 
 /// 添加角色
@@ -52,7 +52,7 @@ pub async fn role_list(Json(item): Json<RoleListReq>) -> impl IntoResponse {
     request_body = RoleSaveReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=id", body = BaseResponse<u64>),
+        (status = 200, description = "操作成功, code=0, data=id", body = Response<u64>),
     )
 )]
 pub async fn role_save(Json(item): Json<RoleSaveReq>) -> impl IntoResponse {
@@ -69,7 +69,7 @@ pub async fn role_save(Json(item): Json<RoleSaveReq>) -> impl IntoResponse {
     request_body = RoleUpdateReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=id", body = BaseResponse<u64>),
+        (status = 200, description = "操作成功, code=0, data=id", body = Response<u64>),
     )
 )]
 pub async fn role_update(Json(item): Json<RoleUpdateReq>) -> impl IntoResponse {
@@ -85,7 +85,7 @@ pub async fn role_update(Json(item): Json<RoleUpdateReq>) -> impl IntoResponse {
     request_body = RoleDeleteReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=id", body = BaseResponse<u64>),
+        (status = 200, description = "操作成功, code=0, data=id", body = Response<u64>),
     )
 )]
 pub async fn role_delete(Json(item): Json<RoleDeleteReq>) -> impl IntoResponse {
@@ -101,7 +101,7 @@ pub async fn role_delete(Json(item): Json<RoleDeleteReq>) -> impl IntoResponse {
     request_body = QueryRoleMenuReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=QueryRoleMenuData", body = BaseResponse<Vec<QueryRoleMenuData>>),
+        (status = 200, description = "操作成功, code=0, data=QueryRoleMenuData", body = Response<Vec<QueryRoleMenuData>>),
     )
 )]
 pub async fn query_role_menu(Json(item): Json<QueryRoleMenuReq>) -> impl IntoResponse {
@@ -117,7 +117,7 @@ pub async fn query_role_menu(Json(item): Json<QueryRoleMenuReq>) -> impl IntoRes
     request_body = UpdateRoleMenuReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=id", body = BaseResponse<u64>),
+        (status = 200, description = "操作成功, code=0, data=id", body = Response<u64>),
     )
 )]
 pub async fn update_role_menu(Json(item): Json<UpdateRoleMenuReq>) -> impl IntoResponse {

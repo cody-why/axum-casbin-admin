@@ -37,7 +37,7 @@ where
     path = "/admin/login",
     request_body = UserLoginReq,
     responses(
-        (status = 200, description = "操作成功, code=0, data=token", body = BaseResponse<String>),
+        (status = 200, description = "操作成功, code=0, data=token", body = Response<String>),
     )
 )]
 pub async fn login(Json(item): Json<UserLoginReq>) -> impl IntoResponse {
@@ -53,7 +53,7 @@ pub async fn login(Json(item): Json<UserLoginReq>) -> impl IntoResponse {
     request_body = QueryUserRoleReq,
     security(("token" = [])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=QueryUserRoleData", body = BaseResponse<Vec<QueryUserRoleData>>),
+        (status = 200, description = "操作成功, code=0, data=QueryUserRoleData", body = Response<Vec<QueryUserRoleData>>),
     )
 )]
 pub async fn query_user_role(Json(item): Json<QueryUserRoleReq>) -> impl IntoResponse {
@@ -69,7 +69,7 @@ pub async fn query_user_role(Json(item): Json<QueryUserRoleReq>) -> impl IntoRes
     request_body = UpdateUserRoleReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=bool", body = BaseResponse<bool>),
+        (status = 200, description = "操作成功, code=0, data=bool", body = Response<bool>),
     )
 )]
 pub async fn update_user_role(Json(item): Json<UpdateUserRoleReq>) -> impl IntoResponse {
@@ -84,7 +84,7 @@ pub async fn update_user_role(Json(item): Json<UpdateUserRoleReq>) -> impl IntoR
     path = "/admin/query_user_menu",
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=QueryUserMenuData", body = BaseResponse<Vec<QueryUserMenuData>>),
+        (status = 200, description = "操作成功, code=0, data=QueryUserMenuData", body = Response<Vec<QueryUserMenuData>>),
     )
 )]
 pub async fn query_user_menu(content: UserContext) -> impl IntoResponse {
@@ -101,7 +101,7 @@ pub async fn query_user_menu(content: UserContext) -> impl IntoResponse {
     request_body = UserListReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=[UserListData]", body = BaseResponse<Vec<UserListData>>),
+        (status = 200, description = "操作成功, code=0, data=[UserListData]", body = Response<Vec<UserListData>>),
     )
 )]
 pub async fn user_list(Json(item): Json<UserListReq>) -> impl IntoResponse {
@@ -109,7 +109,7 @@ pub async fn user_list(Json(item): Json<UserListReq>) -> impl IntoResponse {
     let total = result.as_ref().map(|data| data.total).unwrap_or(0);
     // 转换成前端需要的格式
     let result = result.map(|data| data.records);
-    Response::result_page(result, total)
+    Response::page(result, total)
 }
 
 /// 添加用户
@@ -120,7 +120,7 @@ pub async fn user_list(Json(item): Json<UserListReq>) -> impl IntoResponse {
     request_body = UserSaveReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=id", body = BaseResponse<u64>),
+        (status = 200, description = "操作成功, code=0, data=id", body = Response<u64>),
     )
 )]
 pub async fn user_save(Json(item): Json<UserSaveReq>) -> impl IntoResponse {
@@ -136,7 +136,7 @@ pub async fn user_save(Json(item): Json<UserSaveReq>) -> impl IntoResponse {
     request_body = UserUpdateReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=id", body = BaseResponse<u64>),
+        (status = 200, description = "操作成功, code=0, data=id", body = Response<u64>),
     )
 )]
 pub async fn user_update(Json(item): Json<UserUpdateReq>) -> impl IntoResponse {
@@ -152,7 +152,7 @@ pub async fn user_update(Json(item): Json<UserUpdateReq>) -> impl IntoResponse {
     request_body = UserDeleteReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=id", body = BaseResponse<u64>),
+        (status = 200, description = "操作成功, code=0, data=id", body = Response<u64>),
     )
 )]
 pub async fn user_delete(Json(item): Json<UserDeleteReq>) -> impl IntoResponse {
@@ -168,7 +168,7 @@ pub async fn user_delete(Json(item): Json<UserDeleteReq>) -> impl IntoResponse {
     request_body = UpdateUserPwdReq,
     security(("token"=[])),
     responses(
-        (status = 200, description = "操作成功, code=0, data=id", body = BaseResponse<u64>),
+        (status = 200, description = "操作成功, code=0, data=id", body = Response<u64>),
     )
 )]
 pub async fn update_user_password(Json(item): Json<UpdateUserPwdReq>) -> impl IntoResponse {

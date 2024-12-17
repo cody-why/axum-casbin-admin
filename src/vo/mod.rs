@@ -11,7 +11,7 @@ pub mod user_vo;
 
 /// 统一返回Response
 #[derive(Serialize, Debug, Clone, ToSchema)]
-pub struct BaseResponse<T>
+pub struct Response<T>
 where
     T: Serialize + Debug,
 {
@@ -25,7 +25,7 @@ where
     pub total: Option<u64>,
 }
 
-impl<T> IntoResponse for BaseResponse<T>
+impl<T> IntoResponse for Response<T>
 where
     T: Serialize + Debug,
 {
@@ -35,7 +35,7 @@ where
     }
 }
 
-impl<T> From<Result<T, Error>> for BaseResponse<T>
+impl<T> From<Result<T, Error>> for Response<T>
 where
     T: Serialize + Debug,
 {
@@ -47,7 +47,7 @@ where
     }
 }
 
-impl<T> From<Error> for BaseResponse<T>
+impl<T> From<Error> for Response<T>
 where
     T: Serialize + Debug,
 {
@@ -63,7 +63,7 @@ where
     }
 }
 
-impl<T> From<T> for BaseResponse<T>
+impl<T> From<T> for Response<T>
 where
     T: Serialize + Debug,
 {
@@ -77,62 +77,40 @@ where
     }
 }
 
-/// 统一返回结果
-pub struct Response<T>(pub Result<T, Error>);
+// pub struct Response<T>(pub Result<T, Error>);
 
 impl<T> Response<T>
 where
     T: Serialize + Debug,
 {
     pub fn ok(data: T) -> Self {
-        Self(Ok(data))
+        Self::from(data)
     }
 
     pub fn err(err: impl Into<Error>) -> Self {
-        Self(Err(err.into()))
+        Self::from(err.into())
     }
 
     pub fn result(result: Result<T, impl Into<Error> + Debug>) -> Self {
         match result {
-            Ok(data) => Self(Ok(data)),
-            Err(err) => Self(Err(err.into())),
+            Ok(data) => Self::from(data),
+            Err(err) => Self::from(err.into()),
         }
     }
 
-    pub fn result_page(result: Result<T, impl Into<Error> + Debug>, total: u64) -> BaseResponse<T> {
+    pub fn page(result: Result<T, impl Into<Error> + Debug>, total: u64) -> Response<T> {
         match result {
-            Ok(data) => ok_result_page(data, total),
-            Err(err) => err_result_page::<T>(err),
+            Ok(data) => ok_page(data, total),
+            Err(err) => Self::from(err.into()),
         }
     }
 }
 
-impl<T> IntoResponse for Response<T>
-where
-    T: Serialize + Debug,
-{
-    fn into_response(self) -> axum::response::Response {
-        BaseResponse::from(self.0).into_response()
-    }
-}
-
-fn ok_result_page<T: Serialize + Debug>(data: T, total: u64) -> BaseResponse<T> {
-    BaseResponse {
+fn ok_page<T: Serialize + Debug>(data: T, total: u64) -> Response<T> {
+    Response {
         msg: Some("Success".to_string()),
         code: 0,
         data: Some(data),
         total: Some(total),
-    }
-}
-
-fn err_result_page<T: Serialize + Debug>(err: impl Into<Error>) -> BaseResponse<T> {
-    let err = err.into();
-    tracing::warn!("error: {:?}", err);
-    let (code, msg) = err.to_msg();
-    BaseResponse {
-        msg: Some(msg),
-        code,
-        data: None,
-        total: None,
     }
 }

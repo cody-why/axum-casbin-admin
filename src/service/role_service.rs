@@ -121,7 +121,11 @@ pub async fn update_role_menu(item: UpdateRoleMenuReq) -> Result<u64> {
     let _ = SysRoleMenu::delete_by_column(rb, "role_id", &role_id).await?;
 
     let len = item.menu_ids.len();
-    let role_menu: Vec<SysRoleMenu> = item.menu_ids.iter().map(|x| SysRoleMenu::new(role_id, *x)).collect();
+    let role_menu: Vec<SysRoleMenu> = item
+        .menu_ids
+        .iter()
+        .map(|x| SysRoleMenu::new(role_id, *x))
+        .collect();
 
     let result = SysRoleMenu::insert_batch(rb, &role_menu, len as u64).await?;
     SysRoleMenu::remove_select_all_cache();
@@ -138,7 +142,7 @@ pub async fn update_role_menu(item: UpdateRoleMenuReq) -> Result<u64> {
             }
         })
         .collect();
-    let _ = CasbinService::update_role_policy(role_id, &menus).await?;
+    let _ = CasbinService::update_role_policy(role_id as u64, &menus).await?;
 
     Ok(result.rows_affected)
 }

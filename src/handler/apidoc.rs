@@ -24,7 +24,7 @@ where
         // nest(
         //     (path = "/admin", api = user_handler::TodoApi)
         // ),
-        components(schemas(BaseResponse<String>)),
+        components(schemas(Response<String>)),
         // tags(
         //     (name = "user", description = "User API"),
         // ),
@@ -41,7 +41,10 @@ where
     impl utoipa::Modify for SecurityAddon {
         fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
             if let Some(components) = openapi.components.as_mut() {
-                components.add_security_scheme("token", SecurityScheme::Http(Http::new(HttpAuthScheme::Bearer)))
+                components.add_security_scheme(
+                    "token",
+                    SecurityScheme::Http(Http::new(HttpAuthScheme::Bearer)),
+                )
             }
         }
     }

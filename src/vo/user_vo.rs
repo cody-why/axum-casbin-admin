@@ -29,7 +29,7 @@ pub struct QueryUserRoleData {
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct UpdateUserRoleReq {
     pub user_id: u64,
-    pub role_ids: Vec<i32>,
+    pub role_ids: Vec<u64>,
 }
 
 #[derive(Debug, Serialize, ToSchema)]

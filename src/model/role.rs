@@ -1,8 +1,3 @@
-/*
- * @Date: 2024-06-28 15:21:48
- * @LastEditTime: 2024-07-18 16:56:32
- */
-
 use rbatis::{impl_select_page, rbdc::datetime::DateTime};
 use serde::{Deserialize, Serialize};
 
@@ -11,8 +6,8 @@ pub struct SysRole {
     pub id: Option<i32>,
     pub create_time: Option<DateTime>,
     pub update_time: Option<DateTime>,
-    pub status: i32,
-    pub role_name: String,
+    pub status: Option<i32>,
+    pub role_name: Option<String>,
     pub remark: Option<String>,
 }
 

@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS sys_menu;
+
 create table sys_menu
 (
-    id          int auto_increment comment '主键'
-        primary key,
+    id          int auto_increment primary key,
     menu_name   varchar(50)                            not null comment '菜单名称',
     menu_type   tinyint      default 1                 not null comment '菜单类型(1：目录   2：菜单   3：按钮)',
     status      tinyint      default 1                 not null comment '状态(1:正常，0:禁用)',
@@ -14,56 +14,50 @@ create table sys_menu
     remark      varchar(255)                           null comment '备注',
     create_time datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '修改时间',
-    constraint menu_name_uindex
-        unique (menu_name)
-)
-    comment '菜单信息';
+    constraint menu_name_uindex unique (menu_name)
+) AUTO_INCREMENT = 1000 comment '菜单信息';
+
+-- 权限管理
+insert into sys_menu(id,menu_name,menu_type,status,sort,parent_id,menu_url,api_url,icon,remark) values 
+('1','首页','1','1','0','0','/home','','HomeOutlined','首页'),
+('2','权限管理','1','1','2','0','/permission','','SettingOutlined','目录'),
+-- ('3','基础管理','1','1','1','0','/base','','SettingOutlined','目录'),
+('4','日志管理','1','1','4','0','/log','','SnippetsOutlined','目录'),
 
 
-insert into sys_menu(id,menu_name,menu_type,status,sort,parent_id,menu_url,api_url,icon,remark) 
-values('1','首页','1','1','0','0','/home','','HomeOutlined','首页'),
-('2','权限管理','1','1','1','0','/permission','','SettingOutlined','权限管理'),
-('3','用户管理','2','1','3','2','/user','','UserOutlined','用户管理'),
-('4','角色管理','2','1','2','2','/role','','AuditOutlined','角色管理'),
-('5','菜单管理','2','1','1','2','/menu','','MenuOutlined','菜单管理'),
-('6','查询用户','3','1','1','3','','/admin/user_list','','查询用户接口'),
-('7','更新用户状态','3','1','1','3','','/admin/update_user_status','','更新用户状态接口'),
--- ('8','保存用户弹窗','3','1','1','3','','/admin/user_save_view','','保存用户弹窗'),
-('9','保存用户','3','1','1','3','','/admin/user_save','','保存用户接口'),
-('10','删除用户','3','1','1','3','','/admin/user_delete','','删除用户接口'),
--- ('11','更新用户弹窗','3','1','1','3','','/admin/user_update_view','','更新用户弹窗'),
-('12','更新用户','3','1','1','3','','/admin/user_update','','更新用户接口'),
-('13','更新用户密码弹窗','3','1','1','3','','/admin/update_user_password_view','','更新用户密码弹窗'),
-('14','更新用户密码','3','1','1','3','','/admin/update_user_password','','更新用户密码接口'),
--- ('15','设置角色弹窗','3','1','1','3','','/admin/update_user_role_view','','设置角色弹窗'),
-('16','保存用户角色','3','1','1','3','','/admin/update_user_role','','保存用户角色接口'),
-('17','用户关联的角色','3','1','1','3','','/admin/query_user_role','','获取用户关联的角色'),
+-- 用户管理
+('10','用户管理','2','1','1','2','/user','','UserOutlined','菜单'),
+('11','查询用户','3','1','1','10','','POST /admin/user/list','','接口'),
+('12','保存用户','3','1','1','10','','POST /admin/user','','接口'),
+('13','删除用户','3','1','1','10','','DELETE /admin/user','','接口'),
+('14','更新用户','3','1','1','10','','PUT /admin/user','','接口'),
+('15','重置密码','3','1','1','10','','PUT /admin/user/reset_password','','接口'),
+('16','更新用户密码','3','1','1','10','','PUT /admin/user/update_password','','接口'),
+('17','保存用户角色','3','1','1','10','','PUT /admin/user/role','','接口'),
+('18','用户关联的角色','3','1','1','10','','POST /admin/user/role','','接口'),
+
 -- 角色管理
-('18','查询角色','3','1','1','4','','/admin/role_list','','查询角色接口'),
-('19','更新角色状态','3','1','1','4','','/admin/update_role_status','','更新角色状态接口'),
--- ('20','保存角色弹窗','3','1','1','4','','/admin/role_save_view','','保存角色弹窗'),
-('21','保存角色','3','1','1','4','','/admin/role_save','','保存角色接口'),
-('22','删除角色','3','1','1','4','','/admin/role_delete','','删除角色接口'),
--- ('23','修改角色弹窗','3','1','1','4','','/admin/role_update_view','','修改角色弹窗'),
-('24','更新角色','3','1','1','4','','/admin/role_update','','更新角色接口'),
--- ('25','设置权限弹窗','3','0','1','4','','/admin/query_role_menu_view','','设置权限弹窗'),
-('26','菜单角色关联','3','1','1','4','','/admin/query_role_menu','','菜单角色关联'),
-('27','保存角色菜单关联','3','1','1','4','','/admin/update_role_menu','','角色菜单关联接口'),
+('30','角色管理','2','1','1','2','/role','','AuditOutlined','菜单'),
+('31','查询角色','3','1','1','30','','POST /admin/role/list','','接口'),
+('32','保存角色','3','1','1','30','','POST /admin/role','','接口'),
+('33','删除角色','3','1','1','30','','DELETE /admin/role','','接口'),
+('34','更新角色','3','1','1','30','','PUT /admin/role','','接口'),
+('35','查询角色菜单','3','1','1','30','','POST /admin/role/menu','','接口'),
+('36','保存角色菜单','3','1','1','30','','PUT /admin/role/menu','','接口'),
+
 -- 菜单管理
-('28','查询菜单','3','1','1','5','','/admin/menu_list','','查询菜单接口'),
-('29','更新菜单状态','3','1','1','5','','/admin/update_menu_status','','更新菜单状态接口'),
--- ('30','保存菜单弹窗','3','1','1','5','','/admin/menu_save_view','','保存菜单弹窗'),
-('31','保存菜单','3','1','1','5','','/admin/menu_save','','保存菜单接口'),
-('32','删除菜单','3','1','1','5','','/admin/menu_delete','','删除菜单接口'),
--- ('33','修改菜单弹窗','3','1','1','5','','/admin/menu_update_view','','修改菜单弹窗'),
-('34','更新菜单','3','1','1','5','','/admin/menu_update','','更新菜单接口'),
--- 日志管理
-('63','日志管理','1','1','1','0','/log1','','SnippetsOutlined',''),
-('64','登录日志','2','1','1','63','/log','','',''),
-('65','常用图表','1','1','1','0','/line1','','DashboardOutlined',''),
-('66','饼图','2','1','1','65','/pie','','','饼图'),
-('67','线图','2','1','1','65','/line','','','线图'),
-('68','柱状图','2','1','1','65','/bar','','','柱状图'),
-('69','个人中心','1','1','1','0','/center1','','UserOutlined',''),
-('72','个人信息','2','1','1','69','/center','','',''),
-('73','个人设置','2','1','1','69','/setting','','','');
+('50','菜单管理','2','1','3','2','/menu','','MenuOutlined','菜单'),
+('51','查询菜单','3','1','1','50','','POST /admin/menu/list','','接口'),
+('52','保存菜单','3','1','1','50','','POST /admin/menu','','接口'),
+('53','更新菜单','3','1','1','50','','PUT /admin/menu','','接口'),
+('54','删除菜单','3','1','1','50','','DELETE /admin/menu','','接口'),
+
+
+('64','登录日志','2','1','1','4','/user','','','菜单'),
+('65','常用图表','1','1','1','0','/line1','','DashboardOutlined','目录'),
+('66','饼图','2','1','1','65','/pie','','','菜单'),
+('67','线图','2','1','1','65','/line','','','菜单'),
+('68','柱状图','2','1','1','65','/bar','','','菜单'),
+('69','个人中心','1','1','1','0','/center1','','UserOutlined','目录'),
+('72','个人信息','2','1','1','69','/center','','','菜单'),
+('73','个人设置','2','1','1','69','/setting','','','菜单');

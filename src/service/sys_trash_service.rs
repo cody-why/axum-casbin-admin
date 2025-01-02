@@ -1,4 +1,4 @@
-use crate::model::trash::SysTrash;
+use crate::model::sys_trash::SysTrash;
 use crate::pool;
 use crate::service::context;
 use parking_lot::Mutex;

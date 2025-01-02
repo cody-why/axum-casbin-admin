@@ -34,8 +34,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "pageNo": 1,
-  "pageSize": 10,
+  "page_no": 1,
+  "page_size": 10,
   "mobile": "",
   "status": 1
 }

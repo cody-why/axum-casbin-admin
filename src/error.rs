@@ -35,7 +35,7 @@ impl Error {
             Error::E(s) => (1, s.clone()),
             _ => {
                 // tracing::info!("error: {:?}", self);
-                (2, "Failed".to_string())
+                (2, "操作失败".to_string())
             },
         };
         (msg.0, msg.1)

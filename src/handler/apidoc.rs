@@ -1,9 +1,6 @@
-/*
- * @Date: 2024-07-24 10:14:10
- * @LastEditTime: 2024-07-24 21:35:50
- */
 
-use crate::vo::*;
+
+use crate::common::*;
 use axum::Router;
 use utoipa::openapi::security::{Http, HttpAuthScheme, SecurityScheme};
 use utoipa::OpenApi;

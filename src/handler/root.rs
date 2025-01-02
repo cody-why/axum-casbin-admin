@@ -1,7 +1,4 @@
-/*
- * @Date: 2024-06-28 15:21:48
- * @LastEditTime: 2024-07-24 20:59:49
- */
+
 
 use axum::response::IntoResponse;
 use axum::routing::get;
@@ -11,7 +8,7 @@ use tower_http::{
     services::{ServeDir, ServeFile},
 };
 
-use super::{apidoc, menu_handler, role_handler, user_handler};
+use super::{apidoc, sys_menu_handler, sys_role_handler, sys_user_handler};
 use crate::middleware::limit::limit_layer;
 use crate::middleware::logger::log_layer;
 use crate::Json;
@@ -33,9 +30,9 @@ pub fn app() -> Router {
         .nest(
             "/admin",
             Router::new()
-                .merge(user_handler::router())
-                .merge(role_handler::router())
-                .merge(menu_handler::router()), // .with_state(app_state)
+                .merge(sys_user_handler::router())
+                .merge(sys_role_handler::router())
+                .merge(sys_menu_handler::router()), // .with_state(app_state)
         )
         .layer(middleware::from_fn(auth_layer))
         .layer(middleware::from_fn(limit_layer))

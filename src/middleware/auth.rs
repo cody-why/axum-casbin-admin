@@ -26,7 +26,7 @@ pub async fn auth_layer(
 
     // let auth = jwt_token.permissions.first() == Some(&"*".to_string())
     //     || jwt_token.permissions.iter().any(|permission| permission == &path);
-    let is_qm = &path == "/admin/query_user_menu";
+    let is_qm = &path == "/admin/user/menu";
     let auth = is_qm || CasbinService::enforce(jwt_token.id, &path, req.method().as_str()).await;
     if !auth {
         // tracing::warn!("auth_layer req {:?} {:?} auth={}", req.method(), req.uri(), auth);
@@ -44,8 +44,10 @@ pub async fn auth_layer(
         let token = format!("Bearer {}", token); //Authorization: Bearer <token>
         rep.headers_mut()
             .insert("Authorization", HeaderValue::from_str(&token).unwrap());
-        rep.headers_mut()
-            .insert("Access-Control-Expose-Headers", HeaderValue::from_str("authorization").unwrap());
+        rep.headers_mut().insert(
+            "Access-Control-Expose-Headers",
+            HeaderValue::from_str("authorization").unwrap(),
+        );
     }
     Ok(rep)
 }

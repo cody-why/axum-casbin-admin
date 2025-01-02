@@ -6,10 +6,10 @@ use crate::config::Config;
 use crate::utils::cache::cache_service::CacheService;
 use crate::utils::db::init_db;
 
-pub mod menu_service;
-pub mod role_service;
+pub mod sys_menu_service;
+pub mod sys_role_service;
 pub mod sys_trash_service;
-pub mod user_service;
+pub mod sys_user_service;
 
 pub mod casbin_service;
 pub mod login_service;

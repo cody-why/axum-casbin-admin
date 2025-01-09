@@ -142,7 +142,7 @@ pub async fn update_role_menu(item: UpdateRoleMenuReq) -> Result<u64> {
             }
         })
         .collect();
-    let _ = CasbinService::update_role_policy(role_id as u64, &menus).await?;
+    let _ = CasbinService::update_role_policy(role_id as i64, &menus).await?;
 
     Ok(result.rows_affected)
 }

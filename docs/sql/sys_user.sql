@@ -3,7 +3,7 @@
 -- 创建用户信息表
 CREATE TABLE sys_user
 (
-    id          bigint UNSIGNED auto_increment comment '主键'
+    id          bigint auto_increment comment '主键'
         primary key,
     mobile      char(11) default ''                not null comment '手机',
     user_name   varchar(50)                        not null comment '姓名',

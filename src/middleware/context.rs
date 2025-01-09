@@ -2,10 +2,10 @@ use axum::{extract::FromRequestParts, http::request::Parts};
 
 #[derive(Debug, Clone)]
 pub struct UserContext {
-    pub id: u64,
+    pub id: i64,
 }
 
-// impl FromRequest 
+// impl FromRequest
 #[axum::async_trait]
 impl<S> FromRequestParts<S> for UserContext
 where
@@ -20,6 +20,5 @@ where
         }
 
         Err("UserContext not found".into())
-        
     }
 }

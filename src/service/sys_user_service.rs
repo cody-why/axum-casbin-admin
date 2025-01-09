@@ -216,7 +216,7 @@ pub async fn user_update(item: UserUpdateReq) -> Result<u64> {
 pub async fn user_delete(item: UserDeleteReq) -> Result<u64> {
     let rb = pool!();
     //id为1的用户为系统预留用户,不能删除
-    let ids: Vec<u64> = item.ids.par_iter().filter(|x| **x != 1).cloned().collect();
+    let ids: Vec<i64> = item.ids.par_iter().filter(|x| **x != 1).cloned().collect();
     if ids.is_empty() {
         return Ok(0);
     }

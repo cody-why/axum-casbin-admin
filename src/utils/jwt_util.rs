@@ -33,7 +33,7 @@ impl Keys {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct JWTToken {
-    pub id: u64,
+    pub id: i64,
     pub username: String,
     pub permissions: Vec<String>,
     exp: u64,
@@ -42,7 +42,7 @@ pub struct JWTToken {
 }
 
 impl JWTToken {
-    pub fn new(id: u64, username: &str, permissions: Vec<String>) -> JWTToken {
+    pub fn new(id: i64, username: &str, permissions: Vec<String>) -> JWTToken {
         //过期时间
         let m30 = Duration::from_secs(context().config.jwt_exp).as_secs();
         let now = get_timestamp();
@@ -63,12 +63,7 @@ impl JWTToken {
 
     /// create token
     pub fn create_token(&self) -> Result<String, Error> {
-        encode(
-            &Header::default(),
-            self,
-            &get_key().encoding_key,
-        )
-        .map_err(Error::Jwt)
+        encode(&Header::default(), self, &get_key().encoding_key).map_err(Error::Jwt)
     }
 
     /// verify token invalid
@@ -78,18 +73,16 @@ impl JWTToken {
         // validation.set_audience(&["rust_admin"]);
         validation.set_required_spec_claims(&["exp"]); // "aud"
 
-        decode::<JWTToken>(
-            token,
-            &get_key().decoding_key,
-            &validation,
-        )
-        .map(|c| c.claims)
-        .map_err(Error::Jwt)
+        decode::<JWTToken>(token, &get_key().decoding_key, &validation)
+            .map(|c| c.claims)
+            .map_err(Error::Jwt)
     }
 
     pub fn check_refresh(&mut self) -> Result<String, Error> {
         let now = get_timestamp();
-        if context().config.jwt_refresh_token > 0 && now > self.iat + context().config.jwt_refresh_token {
+        if context().config.jwt_refresh_token > 0
+            && now > self.iat + context().config.jwt_refresh_token
+        {
             self.exp = now + context().config.jwt_exp;
             self.iat = now;
             return self.create_token();
@@ -107,10 +100,8 @@ where
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
         // info!("JWTToken from_request_parts");
-        let auth_header = parts
-            .headers
-            .get(header::AUTHORIZATION)
-            .and_then(|header| header.to_str().ok());
+        let auth_header =
+            parts.headers.get(header::AUTHORIZATION).and_then(|header| header.to_str().ok());
 
         let token = if let Some(auth_header) = auth_header {
             auth_header.to_string().replace("Bearer ", "")
@@ -125,10 +116,7 @@ where
             Ok(data) => data,
             Err(err) => {
                 // error!("Token verify error:{}",err);
-                return Err(format!(
-                    "Token verify error:{}",
-                    err
-                ));
+                return Err(format!("Token verify error:{}", err));
             },
         };
         Ok(jwt_token)

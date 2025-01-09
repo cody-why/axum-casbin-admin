@@ -33,7 +33,7 @@ impl CasbinService {
     }
 
     /// 获取用户的权限菜单ids
-    pub async fn get_user_menu_ids(user_id: impl ToString) -> Vec<u64> {
+    pub async fn get_user_menu_ids(user_id: impl ToString) -> Vec<i64> {
         let ps = casbin_write!().get_implicit_permissions_for_user(&user_id.to_string(), None);
 
         // [["1", "*", "*", "id"]]
@@ -43,7 +43,7 @@ impl CasbinService {
             .collect()
     }
     /// 获取角色的权限菜单ids
-    pub async fn get_role_menu_ids(role_id: impl std::fmt::Display) -> Vec<u64> {
+    pub async fn get_role_menu_ids(role_id: impl std::fmt::Display) -> Vec<i64> {
         let ps = casbin_write!().get_implicit_permissions_for_user(&format!("r{role_id}"), None);
         // [["1", "*", "*", "id"]]
         ps.iter().filter(|x| x[1] != "*").map(|x| x[3].parse().unwrap_or(0)).collect()
@@ -60,7 +60,7 @@ impl CasbinService {
     }
 
     /// 更新角色的权限
-    pub async fn update_role_policy(role_id: u64, menus: &[SysMenu]) -> Result<bool> {
+    pub async fn update_role_policy(role_id: i64, menus: &[SysMenu]) -> Result<bool> {
         let role_id = format!("r{role_id}");
 
         use std::collections::HashSet;
@@ -105,7 +105,7 @@ impl CasbinService {
     }
 
     /// 更新用户的角色
-    pub async fn update_user_roles(user_id: impl ToString, role_ids: &[u64]) -> Result<bool> {
+    pub async fn update_user_roles(user_id: impl ToString, role_ids: &[i64]) -> Result<bool> {
         // 获取当前用户已有的角色
         let mut e = casbin_write!();
         let current_roles = e.get_roles_for_user(&user_id.to_string(), None);

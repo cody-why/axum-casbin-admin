@@ -22,8 +22,8 @@ pub struct QueryUserRoleData {
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct UpdateUserRoleReq {
-    pub user_id: u64,
-    pub role_ids: Vec<u64>,
+    pub user_id: i64,
+    pub role_ids: Vec<i64>,
 }
 
 #[derive(Debug, Serialize, ToSchema)]
@@ -68,7 +68,7 @@ pub struct UserListReq {
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserListData {
-    pub id: u64,
+    pub id: i64,
     pub status: i32,
     pub mobile: String,
     pub user_name: String,
@@ -115,7 +115,7 @@ impl From<UserSaveReq> for SysUser {
 }
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserUpdateReq {
-    pub id: u64,
+    pub id: i64,
     pub status: Option<i32>,
     pub mobile: Option<String>,
     pub user_name: Option<String>,
@@ -138,17 +138,17 @@ impl From<UserUpdateReq> for SysUserUpdate {
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct UserDeleteReq {
-    pub ids: Vec<u64>,
+    pub ids: Vec<i64>,
 }
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct UpdateUserPwdReq {
-    pub id: u64,
+    pub id: i64,
     pub password: String,
     pub new_password: String,
 }
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct UserIdReq {
-    pub user_id: u64,
+    pub user_id: i64,
 }

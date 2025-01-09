@@ -9,7 +9,7 @@ pub struct SysUserRole {
     pub update_time: Option<DateTime>,
     pub status: i32,
     pub role_id: i32,
-    pub user_id: u64,
+    pub user_id: i64,
 }
 
 rbatis::crud!(SysUserRole {});
